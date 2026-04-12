@@ -44,11 +44,31 @@ class FileUploadView(generics.GenericAPIView):
         
         # Автоматически обновляем Participant
         self._update_participant_files(request.user, file_type, file_instance)
+        
+        # Если это чек об оплате, отправляем уведомление админам
+        if file_type == 'payment':
+            self._notify_admins_about_payment(request.user)
 
         return Response(
             FileSerializer(file_instance).data,
             status=status.HTTP_201_CREATED
         )
+    
+    def _notify_admins_about_payment(self, user):
+        """Отправка уведомления админам о загрузке чека."""
+        try:
+            from apps.participants.models import Participant
+            from apps.telegram_bot.bot import send_payment_notification
+            
+            participant = Participant.objects.get(user=user)
+            # Запускаем уведомление в фоне
+            import asyncio
+            asyncio.create_task(send_payment_notification(participant))
+        except Exception as e:
+            # Не прерываем загрузку файла из-за ошибок уведомления
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f'Ошибка отправки уведомления: {e}')
     
     def _update_participant_files(self, user, file_type, file_instance):
         """Обновляет поля участника при загрузке файлов."""

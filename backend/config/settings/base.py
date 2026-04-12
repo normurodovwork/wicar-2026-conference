@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'apps.participants',
     'apps.payment',
     'apps.conference_files',
+    'apps.telegram_bot',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +145,10 @@ JAZZMIN_SETTINGS = {
         {"name": "Файлы", "model": "files.File"},
     ],
 }
+
+# Telegram Bot
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
+
+# Payment amounts
+PAYMENT_AMOUNT_UZS = 200000
+PAYMENT_AMOUNT_USD = 20
