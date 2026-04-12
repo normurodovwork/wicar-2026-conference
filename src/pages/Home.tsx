@@ -285,12 +285,11 @@ export default function Home() {
       <section className="py-24 bg-card border-y border-border">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="flex flex-col md:flex-row items-center gap-12 max-w-4xl mx-auto">
-            <div className="w-48 h-48 shrink-0 rounded-full border-4 border-conference-blue/10 p-4 bg-white flex items-center justify-center overflow-hidden">
-              <img 
-                src="https://picsum.photos/seed/uwed-logo/300/300" 
-                alt="UWED Logo" 
+            <div className="w-64 h-64 shrink-0 rounded-full border-4 border-conference-blue/10 p-4 bg-white flex items-center justify-center overflow-hidden">
+              <img
+                src="/img/logo_org/logo.jpg"
+                alt="Organizer Logo"
                 className="w-full h-full object-contain"
-                referrerPolicy="no-referrer"
               />
             </div>
             <div className="text-center md:text-left">
@@ -334,10 +333,10 @@ export default function Home() {
                       {/* Chairman */}
                       {chairman && (
                         <div className="p-8 border border-conference-accent/20 bg-card rounded-none flex flex-col md:flex-row gap-8 items-center md:items-start">
-                          {chairman.photo && (
+                          {chairman.photo_url && (
                             <div className="w-32 h-32 shrink-0 overflow-hidden rounded-full hover:scale-105 transition-all duration-500">
                               <img
-                                src={chairman.photo}
+                                src={chairman.photo_url}
                                 alt={chairman.full_name}
                                 className="w-full h-full object-cover"
                                 referrerPolicy="no-referrer"
