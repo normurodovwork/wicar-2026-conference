@@ -43,11 +43,11 @@ const FileUploadCard = ({ type, title, description, icon: Icon, accept, file, is
           <p className="text-[10px] text-muted-foreground">{t('dashboard.file_uploaded')}</p>
         </div>
         <div className="flex items-center gap-1 sm:gap-2">
-          <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground hover:text-foreground" asChild>
-            <a href={file.file_url} target="_blank" rel="noreferrer">
+          <a href={file.file_url} target="_blank" rel="noreferrer">
+            <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground hover:text-foreground">
               <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </a>
-          </Button>
+            </Button>
+          </a>
           {onDelete && (
             <Button
               variant="ghost"
@@ -78,7 +78,9 @@ const FileUploadCard = ({ type, title, description, icon: Icon, accept, file, is
 );
 
 // Компонент карты оплаты
-const PaymentCard = ({ paymentInfo, amount, currency, shouldPay, message, paymentConfirmed }: { paymentInfo: any, amount: number, currency: string, shouldPay: boolean, message: string, paymentConfirmed?: boolean }) => (
+const PaymentCard = ({ paymentInfo, amount, currency, shouldPay, message, paymentConfirmed }: { paymentInfo: any, amount: number, currency: string, shouldPay: boolean, message: string, paymentConfirmed?: boolean }) => {
+  const { t } = useLanguage();
+  return (
   <div className="p-6 border border-border bg-gradient-to-br from-card to-muted/30 space-y-6 rounded-xl">
     {/* Статус подтверждения */}
     {paymentConfirmed && (
@@ -131,7 +133,8 @@ const PaymentCard = ({ paymentInfo, amount, currency, shouldPay, message, paymen
       </>
     )}
   </div>
-);
+  );
+};
 
 export default function Dashboard() {
   const { t } = useLanguage();
