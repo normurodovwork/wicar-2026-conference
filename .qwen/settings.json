@@ -18,7 +18,9 @@
       "Bash(django-admin *)",
       "Bash(move *)",
       "Bash(tasklist)",
-      "Bash(echo *)"
+      "Bash(echo *)",
+      "Bash(mkdir *)",
+      "Bash(robocopy *)"
     ]
   },
   "$version": 3
