@@ -9,7 +9,11 @@
 │   ├── apps/
 │   │   ├── users/        # Пользователи + JWT аутентификация
 │   │   ├── applications/ # Заявки на участие
-│   │   └── files/        # Загрузка файлов
+│   │   ├── files/        # Загрузка файлов
+│   │   ├── committees/   # Комитеты конференции
+│   │   ├── participants/ # Участники конференции
+│   │   ├── payment/      # Оплата и расчёт взносов
+│   │   └── conference_files/ # Глобальные файлы конференции
 │   ├── config/           # Django settings
 │   └── requirements/     # Python зависимости
 ├── src/                  # React фронтенд (Vite, Tailwind, shadcn/ui)
@@ -31,7 +35,9 @@ venv\Scripts\activate  # Windows
 source venv/bin/activate  # Mac/Linux
 pip install -r requirements/dev.txt
 python manage.py migrate
-python manage.py createsuperuser
+python create_superuser.py
+python populate_committees.py
+python populate_payment.py
 python manage.py runserver
 ```
 
@@ -59,27 +65,41 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ## 📋 API Endpoints
 
-| Метод   | Путь                  | Описание                          | Auth |
-|---------|-----------------------|-----------------------------------|------|
-| POST    | `/api/register`       | Регистрация                       | Нет  |
-| POST    | `/api/login`          | Вход, JWT токены                  | Нет  |
-| GET     | `/api/me`             | Данные пользователя               | JWT  |
-| PUT     | `/api/profile`        | Обновление профиля                | JWT  |
-| POST    | `/api/change-password`| Смена пароля                      | JWT  |
-| GET     | `/api/application`    | Получить заявку                   | JWT  |
-| POST    | `/api/application`    | Создать/обновить заявку           | JWT  |
-| POST    | `/api/upload`         | Загрузка файла                    | JWT  |
-| DELETE  | `/api/files/:id`      | Удаление файла                    | JWT  |
-| GET     | `/api/files?type=`    | Глобальные файлы                  | Нет  |
-| GET     | `/api/health`         | Проверка статуса                  | Нет  |
+| Метод   | Путь                           | Описание                          | Auth |
+|---------|-------------------------------|-----------------------------------|------|
+| POST    | `/api/register`               | Регистрация                       | Нет  |
+| POST    | `/api/login`                  | Вход, JWT токены                  | Нет  |
+| GET     | `/api/me`                     | Данные пользователя               | JWT  |
+| PUT     | `/api/profile`                | Обновление профиля                | JWT  |
+| POST    | `/api/change-password`        | Смена пароля                      | JWT  |
+| GET     | `/api/application`            | Получить заявку                   | JWT  |
+| POST    | `/api/application`            | Создать/обновить заявку           | JWT  |
+| POST    | `/api/upload`                 | Загрузка файла                    | JWT  |
+| DELETE  | `/api/files/:id`              | Удаление файла                    | JWT  |
+| GET     | `/api/files?type=`            | Глобальные файлы                  | Нет  |
+| GET     | `/api/committees`             | Комитеты конференции              | Нет  |
+| GET     | `/api/participants`           | Список участников                 | Админ |
+| GET     | `/api/participants/me`        | Данные текущего участника         | JWT  |
+| GET     | `/api/payment-info`           | Информация об оплате              | Нет  |
+| GET     | `/api/payment-calculation`    | Расчёт суммы оплаты               | JWT  |
+| GET     | `/api/conference-files`       | Файлы конференции                 | Нет  |
+| GET     | `/api/health`                 | Проверка статуса                  | Нет  |
 
 ## 🔐 Админ-панель
 
 Доступна по адресу `/admin/`. Войдите с учётными данными суперпользователя.
 
-- Управление пользователями, заявками и файлами
-- Красивый интерфейс через Jazzmin
-- Actions для массового одобрения/отклонения заявок
+**Разделы:**
+- **Пользователи** — управление пользователями
+- **Заявки** — заявки на участие с actions (одобрить/отклонить)
+- **Файлы** — загруженные файлы
+- **Комитеты** — организационный и программный комитеты с членами
+- **Участники** — полная таблица участников с:
+  - Изменением статуса (AJAX)
+  - Подтверждением оплаты (AJAX)
+  - Скачиванием архивов файлов
+  - Экспортом в Excel с финансовым отчётом
+- **Файлы конференции** — загрузка инфо писем, сборника, программы
 
 ## 🛠 Технологии
 
@@ -112,8 +132,17 @@ docker-compose -f docker-compose.prod.yml up -d
 | Команда                      | Описание                              |
 |------------------------------|---------------------------------------|
 | `npm run dev`                | Запуск фронтенда (Vite)               |
+| `npm run build`              | Сборка фронтенда                      |
 | `npm run django:runserver`   | Запуск Django сервера                 |
 | `npm run django:migrate`     | Применение миграций                   |
 | `npm run django:makemigrations` | Создание миграций                  |
 | `npm run django:createsuperuser` | Создание суперпользователя        |
-| `npm run build`              | Сборка фронтенда                      |
+| `npm run django:populate-committees` | Заполнить комитеты           |
+| `npm run django:populate-participants` | Заполнить участников        |
+| `npm run django:populate-payment` | Заполнить данные об оплате        |
+
+## 🌐 Локализация
+
+Поддержка 3 языков: 🇷🇺 Русский, 🇬🇧 English, 🇺🇿 O'zbekcha
+
+Переключение языка в навигационной панели.
