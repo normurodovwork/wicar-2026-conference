@@ -12,10 +12,10 @@
     "django:makemigrations": "cd backend && python manage.py makemigrations",
     "django:migrate": "cd backend && python manage.py migrate",
     "django:runserver": "cd backend && python manage.py runserver 0.0.0.0:8000",
-    "django:createsuperuser": "cd backend && python create_superuser.py",
-    "django:populate-committees": "cd backend && python populate_committees.py",
-    "django:populate-participants": "cd backend && python populate_participants.py",
-    "django:populate-payment": "cd backend && python populate_payment.py",
+    "django:createsuperuser": "cd backend && python scripts/create_superuser.py",
+    "django:populate-committees": "cd backend && python scripts/populate_committees.py",
+    "django:populate-participants": "cd backend && python scripts/populate_participants.py",
+    "django:populate-payment": "cd backend && python scripts/populate_payment.py",
     "django:runbot": "cd backend && python manage.py runbot"
   },
   "dependencies": {
