@@ -1,7 +1,6 @@
 # Node
-node_modules/
-dist/
-build/
+frontend/node_modules/
+frontend/dist/
 
 # Python
 __pycache__/
@@ -10,8 +9,6 @@ __pycache__/
 *.so
 *.egg-info/
 *.egg
-dist/
-build/
 
 # Database
 database.sqlite
@@ -42,8 +39,7 @@ Thumbs.db
 
 # Misc
 *.log
-npm-debug.log*
 IMPLEMENTATION_PLAN.md
 
-# Scripts (для безопасности)
+# Scripts
 backend/scripts/

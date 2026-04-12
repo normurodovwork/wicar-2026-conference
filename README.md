@@ -5,22 +5,36 @@
 ## 🏗 Архитектура
 
 ```
-├── backend/               # Django + DRF
-│   ├── apps/
-│   │   ├── users/        # Пользователи + JWT аутентификация
-│   │   ├── applications/ # Заявки на участие
-│   │   ├── files/        # Загрузка файлов
-│   │   ├── committees/   # Комитеты конференции
-│   │   ├── participants/ # Участники конференции
-│   │   ├── payment/      # Оплата и расчёт взносов
-│   │   └── conference_files/ # Глобальные файлы конференции
-│   ├── config/           # Django settings
-│   └── requirements/     # Python зависимости
-├── src/                  # React фронтенд (Vite, Tailwind, shadcn/ui)
-├── nginx/                # Nginx конфигурация для production
-├── Dockerfile            # Multi-stage build
-├── docker-compose.yml    # Dev окружение
-└── docker-compose.prod.yml # Production с PostgreSQL + Nginx
+wicar-2026-conference/
+├── backend/                  # Django + DRF
+│   ├── apps/                 # Django приложения
+│   │   ├── users/           # Пользователи + JWT аутентификация
+│   │   ├── applications/    # Заявки на участие
+│   │   ├── files/           # Загрузка файлов
+│   │   ├── committees/      # Комитеты конференции
+│   │   ├── participants/    # Участники конференции
+│   │   ├── payment/         # Оплата и расчёт взносов
+│   │   ├── conference_files/ # Глобальные файлы конференции
+│   │   └── telegram_bot/    # Telegram бот
+│   ├── config/              # Django настройки
+│   ├── requirements/        # Python зависимости
+│   ├── scripts/             # Скрипты заполнения БД
+│   ├── media/               # Загруженные файлы
+│   └── templates/           # Django шаблоны
+├── frontend/                 # React фронтенд
+│   ├── src/                 # Исходный код React
+│   │   ├── components/      # React компоненты
+│   │   ├── lib/             # Утилиты (api.ts)
+│   │   └── pages/           # Страницы
+│   ├── public/              # Статические файлы (img, иконки)
+│   ├── components.json      # shadcn/ui конфиг
+│   ├── package.json         # NPM зависимости
+│   ├── tsconfig.json        # TypeScript конфиг
+│   └── vite.config.ts       # Vite конфиг
+├── nginx/                    # Nginx конфигурация для production
+├── Dockerfile                # Multi-stage build
+├── docker-compose.yml        # Dev окружение
+└── docker-compose.prod.yml   # Production с PostgreSQL + Nginx
 ```
 
 ## 🚀 Быстрый старт
@@ -35,14 +49,15 @@ venv\Scripts\activate  # Windows
 source venv/bin/activate  # Mac/Linux
 pip install -r requirements/dev.txt
 python manage.py migrate
-python create_superuser.py
-python populate_committees.py
-python populate_payment.py
+python scripts/create_superuser.py
+python scripts/populate_committees.py
+python scripts/populate_payment.py
 python manage.py runserver
 ```
 
 **2. Запуск React фронтенда (в отдельном терминале):**
 ```bash
+cd frontend
 npm install
 npm run dev
 ```
