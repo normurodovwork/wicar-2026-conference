@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'apps.committees',
     'apps.participants',
     'apps.payment',
+    'apps.conference_files',
 ]
 
 MIDDLEWARE = [

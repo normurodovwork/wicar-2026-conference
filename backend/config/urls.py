@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/', include('apps.committees.urls')),
     path('api/', include('apps.participants.urls')),
     path('api/', include('apps.payment.urls')),
+    path('api/', include('apps.conference_files.urls')),
 ]
 
 # Раздаём медиа-файлы в development

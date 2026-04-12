@@ -87,9 +87,7 @@ export default function Home() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [openAccordion, setOpenAccordion] = useState<number | null>(0);
-  const [infoLetters, setInfoLetters] = useState<any[]>([]);
-  const [collection, setCollection] = useState<any[]>([]);
-  const [program, setProgram] = useState<any[]>([]);
+  const [conferenceFiles, setConferenceFiles] = useState<any>({});
   const [committees, setCommittees] = useState<any[]>([]);
   const [loadingCommittees, setLoadingCommittees] = useState(true);
   const heroRef = useRef(null);
@@ -116,20 +114,21 @@ export default function Home() {
     fetchCommitеты();
   }, []);
 
+  // Загрузка файлов конференции из API
   useEffect(() => {
-    const fetchFiles = async () => {
+    const fetchConferenceFiles = async () => {
       try {
-        const il = await api.get('/api/files?type=info_letter');
-        const coll = await api.get('/api/files?type=collection');
-        const prog = await api.get('/api/files?type=program');
-        setInfoLetters(il);
-        setCollection(coll);
-        setProgram(prog);
-      } catch (e) {
-        console.error(e);
+        const data = await api.get('/api/conference-files');
+        const filesMap: any = {};
+        data.forEach((file: any) => {
+          filesMap[file.file_type] = file;
+        });
+        setConferenceFiles(filesMap);
+      } catch (err) {
+        console.error('Failed to fetch conference files:', err);
       }
     };
-    fetchFiles();
+    fetchConferenceFiles();
   }, []);
 
   return (
@@ -194,49 +193,57 @@ export default function Home() {
                   {t('nav.apply')} <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </a>
 
-                <a
-                  href={program.length > 0 ? program[0].file_url : '#'}
-                  download="conference_program.pdf"
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "lg" }),
-                    "border-conference-accent text-conference-accent hover:bg-conference-accent hover:text-conference-blue-foreground px-6 sm:px-10 h-11 sm:h-14 rounded-none text-[10px] sm:text-xs uppercase tracking-widest font-bold transition-all w-full sm:w-auto"
-                  )}
-                >
-                  <Download className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('hero.download.program')}
-                </a>
+                {conferenceFiles['program'] && (
+                  <a
+                    href={conferenceFiles['program'].file_url}
+                    download={conferenceFiles['program'].file_name || "conference_program.pdf"}
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "lg" }),
+                      "border-conference-accent text-conference-accent hover:bg-conference-accent hover:text-conference-blue-foreground px-6 sm:px-10 h-11 sm:h-14 rounded-none text-[10px] sm:text-xs uppercase tracking-widest font-bold transition-all w-full sm:w-auto"
+                    )}
+                  >
+                    <Download className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('hero.download.program')}
+                  </a>
+                )}
               </div>
 
               <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-                <a
-                  href={infoLetters.length > 0 ? infoLetters[0].file_url : '#'}
-                  download="info_letter_1.pdf"
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "sm" }),
-                    "border-conference-blue text-conference-blue-foreground dark:border-conference-accent dark:text-conference-accent hover:bg-conference-blue hover:text-conference-blue-foreground dark:hover:bg-conference-accent px-3 sm:px-5 h-8 sm:h-10 rounded-none text-[8px] sm:text-[9px] uppercase tracking-widest font-bold transition-all"
-                  )}
-                >
-                  <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.info1')}
-                </a>
-                <a
-                  href={infoLetters.length > 1 ? infoLetters[1].file_url : '#'}
-                  download="info_letter_2.pdf"
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "sm" }),
-                    "border-conference-blue text-conference-blue-foreground dark:border-conference-accent dark:text-conference-accent hover:bg-conference-blue hover:text-conference-blue-foreground dark:hover:bg-conference-accent px-3 sm:px-5 h-8 sm:h-10 rounded-none text-[8px] sm:text-[9px] uppercase tracking-widest font-bold transition-all"
-                  )}
-                >
-                  <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.info2')}
-                </a>
-                <a
-                  href={collection.length > 0 ? collection[0].file_url : '#'}
-                  download="proceedings.pdf"
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "sm" }),
-                    "border-conference-blue text-conference-blue-foreground dark:border-conference-accent dark:text-conference-accent hover:bg-conference-blue hover:text-conference-blue-foreground dark:hover:bg-conference-accent px-3 sm:px-5 h-8 sm:h-10 rounded-none text-[8px] sm:text-[9px] uppercase tracking-widest font-bold transition-all"
-                  )}
-                >
-                  <FileText className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.collection')}
-                </a>
+                {conferenceFiles['info_letter_1'] && (
+                  <a
+                    href={conferenceFiles['info_letter_1'].file_url}
+                    download={conferenceFiles['info_letter_1'].file_name || "info_letter_1.pdf"}
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" }),
+                      "border-conference-blue text-conference-blue-foreground dark:border-conference-accent dark:text-conference-accent hover:bg-conference-blue hover:text-conference-blue-foreground dark:hover:bg-conference-accent px-3 sm:px-5 h-8 sm:h-10 rounded-none text-[8px] sm:text-[9px] uppercase tracking-widest font-bold transition-all"
+                    )}
+                  >
+                    <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.info1')}
+                  </a>
+                )}
+                {conferenceFiles['info_letter_2'] && (
+                  <a
+                    href={conferenceFiles['info_letter_2'].file_url}
+                    download={conferenceFiles['info_letter_2'].file_name || "info_letter_2.pdf"}
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" }),
+                      "border-conference-blue text-conference-blue-foreground dark:border-conference-accent dark:text-conference-accent hover:bg-conference-blue hover:text-conference-blue-foreground dark:hover:bg-conference-accent px-3 sm:px-5 h-8 sm:h-10 rounded-none text-[8px] sm:text-[9px] uppercase tracking-widest font-bold transition-all"
+                    )}
+                  >
+                    <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.info2')}
+                  </a>
+                )}
+                {conferenceFiles['collection'] && (
+                  <a
+                    href={conferenceFiles['collection'].file_url}
+                    download={conferenceFiles['collection'].file_name || "proceedings.pdf"}
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" }),
+                      "border-conference-blue text-conference-blue-foreground dark:border-conference-accent dark:text-conference-accent hover:bg-conference-blue hover:text-conference-blue-foreground dark:hover:bg-conference-accent px-3 sm:px-5 h-8 sm:h-10 rounded-none text-[8px] sm:text-[9px] uppercase tracking-widest font-bold transition-all"
+                    )}
+                  >
+                    <FileText className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.collection')}
+                  </a>
+                )}
               </div>
             </div>
           </motion.div>
