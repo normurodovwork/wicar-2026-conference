@@ -84,7 +84,7 @@ const PaymentCard = ({ paymentInfo, amount, currency, shouldPay, message, paymen
     {paymentConfirmed && (
       <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-2">
         <CheckCircle className="h-5 w-5 text-green-500 shrink-0" />
-        <p className="text-xs font-bold text-green-600">Оплата подтверждена организатором</p>
+        <p className="text-xs font-bold text-green-600">{t('dashboard.payment_confirmed_by_organizer')}</p>
       </div>
     )}
     
@@ -92,13 +92,13 @@ const PaymentCard = ({ paymentInfo, amount, currency, shouldPay, message, paymen
     <div className={`p-4 rounded-lg ${shouldPay ? 'bg-green-500/10 border border-green-500/20' : 'bg-amber-500/10 border border-amber-500/20'}`}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-1">Сумма оплаты</p>
+          <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-1">{t('dashboard.payment_amount_label')}</p>
           {shouldPay && amount > 0 ? (
             <p className="text-3xl font-bold text-green-600">
               {amount.toLocaleString()} <span className="text-lg">{currency}</span>
             </p>
           ) : (
-            <p className="text-lg font-bold text-amber-600">Не требуется оплата</p>
+            <p className="text-lg font-bold text-amber-600">{t('dashboard.no_payment_required')}</p>
           )}
         </div>
         {shouldPay && amount > 0 && <CheckCircle className="h-8 w-8 text-green-500" />}
@@ -119,11 +119,11 @@ const PaymentCard = ({ paymentInfo, amount, currency, shouldPay, message, paymen
           </div>
           <div className="flex justify-between items-end">
             <div>
-              <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">Владелец карты</p>
+              <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">{t('dashboard.card_holder_label')}</p>
               <p className="text-sm font-bold uppercase">{paymentInfo.card_holder}</p>
             </div>
             <div className="text-right">
-              <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">Сумма</p>
+              <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">{t('dashboard.payment_sum_label')}</p>
               <p className="text-xl font-bold">{amount.toLocaleString()} {currency}</p>
             </div>
           </div>
@@ -413,23 +413,23 @@ export default function Dashboard() {
         <div className="flex gap-3 overflow-x-auto">
           {/* Статус заявки */}
           <div className="shrink-0 p-3 bg-muted rounded-lg min-w-[140px]">
-            <p className="text-[8px] uppercase tracking-widest font-bold text-muted-foreground mb-1">Заявка</p>
-            {application ? getStatusBadge(application.status) : <p className="text-[10px] italic text-muted-foreground">Нет</p>}
+            <p className="text-[8px] uppercase tracking-widest font-bold text-muted-foreground mb-1">{t('dashboard.application_short')}</p>
+            {application ? getStatusBadge(application.status) : <p className="text-[10px] italic text-muted-foreground">{t('dashboard.no_short')}</p>}
           </div>
           
           {/* Статус оплаты */}
           {application && (
             <div className={`shrink-0 p-3 rounded-lg min-w-[140px] ${participant?.payment_confirmed ? 'bg-green-500/10 border border-green-500/20' : 'bg-muted'}`}>
-              <p className="text-[8px] uppercase tracking-widest font-bold text-muted-foreground mb-1">Оплата</p>
+              <p className="text-[8px] uppercase tracking-widest font-bold text-muted-foreground mb-1">{t('dashboard.payment_short')}</p>
               {participant?.payment_confirmed ? (
                 <div className="flex items-center gap-1">
                   <CheckCircle className="h-3 w-3 text-green-500" />
-                  <span className="text-[10px] font-bold text-green-600">Да</span>
+                  <span className="text-[10px] font-bold text-green-600">{t('dashboard.yes_short')}</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3 text-amber-500" />
-                  <span className="text-[10px] font-bold text-amber-600">Нет</span>
+                  <span className="text-[10px] font-bold text-amber-600">{t('dashboard.no_short')}</span>
                 </div>
               )}
             </div>
@@ -489,16 +489,16 @@ export default function Dashboard() {
             {/* Статус оплаты */}
             {application && (
               <div className={`p-4 rounded-xl ${participant?.payment_confirmed ? 'bg-green-500/10 border border-green-500/20' : 'bg-muted'}`}>
-                <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-2">Статус оплаты</p>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-2">{t('dashboard.payment_status_label')}</p>
                 {participant?.payment_confirmed ? (
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-xs font-bold text-green-600">Подтверждена</span>
+                    <span className="text-xs font-bold text-green-600">{t('dashboard.payment_confirmed')}</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-amber-500" />
-                    <span className="text-xs font-bold text-amber-600">Не подтверждена</span>
+                    <span className="text-xs font-bold text-amber-600">{t('dashboard.payment_not_confirmed')}</span>
                   </div>
                 )}
               </div>
@@ -520,11 +520,11 @@ export default function Dashboard() {
             {/* Контакты */}
             {paymentInfo && (
               <div className="p-4 border-t border-border bg-muted/30 rounded-b-xl space-y-3">
-                <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Контакты</p>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t('dashboard.contacts_label')}</p>
                 <div className="space-y-2">
                   <a href={`https://t.me/${paymentInfo.telegram_contact?.replace('+', '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
                     <Smartphone className="h-3.5 w-3.5" />
-                    Telegram
+                    {t('dashboard.telegram')}
                   </a>
                   <a href={`tel:${paymentInfo.contact_phone}`} className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
                     <Phone className="h-3.5 w-3.5" />
@@ -532,7 +532,7 @@ export default function Dashboard() {
                   </a>
                   <a href={`mailto:${paymentInfo.contact_email}`} className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
                     <Mail className="h-3.5 w-3.5" />
-                    Email
+                    {t('dashboard.email_short')}
                   </a>
                 </div>
               </div>
@@ -726,7 +726,7 @@ export default function Dashboard() {
                 <section className="space-y-4 sm:space-y-6">
                   <div className="flex items-center gap-3 sm:gap-4">
                     <span className="text-[10px] sm:text-xs font-mono text-conference-accent font-bold">{t('dashboard.step_3') || 'Шаг 3'}</span>
-                    <h2 className="text-sm sm:text-lg font-bold uppercase tracking-widest text-foreground">Оплата</h2>
+                    <h2 className="text-sm sm:text-lg font-bold uppercase tracking-widest text-foreground">{t('dashboard.payment_title')}</h2>
                     <div className="h-px flex-1 bg-border" />
                   </div>
 
@@ -744,8 +744,8 @@ export default function Dashboard() {
                     <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-3">
                       <CheckCircle className="h-6 w-6 text-green-500 shrink-0" />
                       <div>
-                        <p className="text-sm font-bold text-green-600">Оплата подтверждена организатором</p>
-                        <p className="text-xs text-muted-foreground">Ваш организационный взнос успешно подтверждён</p>
+                        <p className="text-sm font-bold text-green-600">{t('dashboard.payment_confirmed_by_organizer')}</p>
+                        <p className="text-xs text-muted-foreground">{t('dashboard.payment_confirmed_desc')}</p>
                       </div>
                     </div>
                   )}
@@ -755,10 +755,10 @@ export default function Dashboard() {
                     <div className="p-6 border border-border bg-card rounded-xl space-y-4">
                       <h3 className="text-sm font-bold uppercase tracking-widest text-foreground flex items-center gap-2">
                         <ImageIcon className="h-4 w-4" />
-                        Загрузить чек об оплате
+                        {t('dashboard.upload_payment_receipt_title')}
                       </h3>
                       <p className="text-xs text-muted-foreground">
-                        После перевода средств загрузите скриншот или фото чека для подтверждения оплаты
+                        {t('dashboard.upload_payment_receipt_desc')}
                       </p>
                       <FileUploadCard
                         type="payment"

@@ -319,7 +319,7 @@ export default function Home() {
             <div className="flex justify-center items-center min-h-[400px]">
               <div className="text-center">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-conference-accent border-t-transparent mb-4" />
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Загрузка комитетов...</p>
+                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">{t('dashboard.committee_loading')}</p>
               </div>
             </div>
           ) : (
