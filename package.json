@@ -4,11 +4,18 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
+    "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "django:makemigrations": "cd backend && python manage.py makemigrations",
+    "django:migrate": "cd backend && python manage.py migrate",
+    "django:runserver": "cd backend && python manage.py runserver 0.0.0.0:8000",
+    "django:createsuperuser": "cd backend && python create_superuser.py",
+    "django:populate-committees": "cd backend && python populate_committees.py",
+    "django:populate-participants": "cd backend && python populate_participants.py",
+    "django:populate-payment": "cd backend && python populate_payment.py"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

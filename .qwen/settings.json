@@ -12,7 +12,12 @@
       "Bash(dir *)",
       "Bash(where *)",
       "Bash(gh *)",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Bash(type *)",
+      "Bash(pip install *)",
+      "Bash(django-admin *)",
+      "Bash(move *)",
+      "Bash(tasklist)"
     ]
   },
   "$version": 3

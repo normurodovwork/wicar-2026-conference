@@ -1,0 +1,216 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static %}
+
+{% block content %}
+<!-- Кнопки действий -->
+<div class="participant-actions">
+  <button class="btn-action success" onclick="downloadAllArchives()">
+    📦 Скачать все работы общим архивом
+  </button>
+  <button class="btn-action warning" onclick="exportToExcel()">
+    📊 Скачать отчёт в Excel
+  </button>
+</div>
+
+{{ block.super }}
+
+<!-- Модальное окно для просмотра чека -->
+<div id="paymentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; cursor:pointer;" onclick="closePaymentModal()">
+  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); max-width:90%; max-height:90%;" onclick="event.stopPropagation()">
+    <img id="paymentModalImg" src="" style="max-width:100%; max-height:90vh; border-radius:8px; box-shadow:0 0 30px rgba(0,0,0,0.5);" />
+    <button onclick="closePaymentModal()" style="position:absolute; top:-40px; right:0; background:#fff; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:18px;">&times;</button>
+  </div>
+</div>
+
+<script>
+function showPaymentModal(src) {
+  document.getElementById('paymentModalImg').src = src;
+  document.getElementById('paymentModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closePaymentModal() {
+  document.getElementById('paymentModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePaymentModal();
+});
+
+function downloadParticipantArchive(participantId) {
+  window.location.href = `/admin/participants/participant/${participantId}/download-archive/`;
+}
+
+function downloadAllArchives() {
+  window.location.href = `/admin/participants/participant/download-all-archives/`;
+}
+
+function exportToExcel() {
+  window.location.href = `/admin/participants/participant/export-to-excel/`;
+}
+
+function changeStatus(participantId, newStatus, btn) {
+  fetch(`/admin/participants/participant/${participantId}/change-status/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken')
+    },
+    body: JSON.stringify({ status: newStatus })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const colors = { pending: '#FF9800', approved: '#4CAF50', rejected: '#F44336' };
+      btn.style.setProperty('color', colors[newStatus], 'important');
+      btn.style.setProperty('font-weight', 'bold', 'important');
+    }
+  })
+  .catch(error => {
+    console.error('Error changing status:', error);
+    alert('Ошибка при изменении статуса');
+  });
+}
+
+function togglePayment(participantId) {
+  const btn = event.target;
+  const isConfirmed = btn.textContent.includes('Оплачено');
+  const confirmMsg = isConfirmed 
+    ? 'Отменить подтверждение оплаты для этого участника?' 
+    : 'Подтвердить оплату для этого участника?';
+  
+  if (!confirm(confirmMsg)) return;
+  
+  const originalText = btn.textContent;
+  btn.textContent = '...';
+  btn.disabled = true;
+  
+  fetch(`/admin/participants/participant/${participantId}/toggle-payment/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken')
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network error: ' + response.status);
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+      if (data.confirmed) {
+        btn.textContent = '✓ Оплачено';
+        btn.style.background = '#4CAF50';
+      } else {
+        btn.textContent = 'Подтвердить';
+        btn.style.background = '#FF9800';
+      }
+      btn.disabled = false;
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  })
+  .catch(error => {
+    console.error('Error toggling payment:', error);
+    btn.textContent = originalText;
+    btn.disabled = false;
+    alert('Ошибка: ' + error.message);
+  });
+}
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+
+<style>
+  .participant-actions {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+  }
+  .btn-action {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #417690;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-action:hover {
+    background: #205067;
+    color: #fff;
+  }
+  .btn-action.success {
+    background: #4CAF50;
+  }
+  .btn-action.success:hover {
+    background: #388E3C;
+  }
+  .btn-action.warning {
+    background: #FF9800;
+  }
+  .btn-action.warning:hover {
+    background: #F57C00;
+  }
+  .status-select {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .payment-thumb {
+    cursor: pointer;
+    max-width: 60px;
+    max-height: 60px;
+    border-radius: 4px;
+    transition: transform 0.2s;
+  }
+  .payment-thumb:hover {
+    transform: scale(1.1);
+  }
+  /* Стиль для кнопок подтверждения оплаты в таблице */
+  #result_list td.field-confirm_payment_link button {
+    white-space: nowrap;
+  }
+  #result_list th.column-confirm_payment_link {
+    width: 100px;
+    text-align: center;
+  }
+  #result_list td.field-confirm_payment_link {
+    text-align: center;
+  }
+  /* Стиль для кнопки скачивания архива */
+  #result_list th.column-download_archive_link {
+    width: 40px;
+    text-align: center;
+  }
+  #result_list td.field-download_archive_link {
+    text-align: center;
+  }
+  #result_list td.field-download_archive_link a:hover {
+    background: #205067 !important;
+    transform: scale(1.1);
+    transition: all 0.2s;
+  }
+</style>
+{% endblock %}

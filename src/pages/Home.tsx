@@ -90,14 +90,31 @@ export default function Home() {
   const [infoLetters, setInfoLetters] = useState<any[]>([]);
   const [collection, setCollection] = useState<any[]>([]);
   const [program, setProgram] = useState<any[]>([]);
+  const [committees, setCommittees] = useState<any[]>([]);
+  const [loadingCommittees, setLoadingCommittees] = useState(true);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"]
   });
-  
+
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
+
+  // Загрузка комитетов из API
+  useEffect(() => {
+    const fetchCommitеты = async () => {
+      try {
+        const data = await api.get('/api/committees');
+        setCommittees(data);
+      } catch (err) {
+        console.error('Failed to fetch committees:', err);
+      } finally {
+        setLoadingCommittees(false);
+      }
+    };
+    fetchCommitеты();
+  }, []);
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -291,128 +308,83 @@ export default function Home() {
       <section className="py-32">
         <div className="container mx-auto px-6 lg:px-12">
           <h2 className="text-4xl md:text-5xl font-serif text-center text-conference-accent mb-24 italic">{t('committee.title')}</h2>
-          
-          <div className="grid lg:grid-cols-2 gap-20">
-            {/* Organizing Committee */}
-            <div className="space-y-12">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-[1px] w-12 bg-conference-accent" />
-                <h3 className="text-xl uppercase tracking-widest font-bold text-foreground">{t('committee.org')}</h3>
-              </div>
-              
-              <div className="space-y-8">
-                <div className="p-8 border border-conference-accent/20 bg-card rounded-none flex flex-col md:flex-row gap-8 items-center md:items-start">
-                  <div className="w-32 h-32 shrink-0 overflow-hidden grayscale hover:grayscale-0 transition-all duration-500">
-                    <img
-                      src="https://picsum.photos/seed/chairman-org/300/300"
-                      alt={t('committee.org.chairman.name')}
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-widest font-bold text-conference-accent mb-2">{t('committee.chairman')}</p>
-                    <h4 className="text-2xl font-serif text-foreground">{t('committee.org.chairman.name')}</h4>
-                    <p className="text-sm text-muted-foreground mt-2">{t('committee.org.chairman.role')}</p>
-                  </div>
-                </div>
 
-                <div className="grid sm:grid-cols-2 gap-6">
-                  {[
-                    { name: t('committee.org.vice.1.name'), role: t('committee.org.vice.1.role') },
-                    { name: t('committee.org.vice.2.name'), role: t('committee.org.vice.2.role') },
-                    { name: t('committee.org.vice.3.name'), role: t('committee.org.vice.3.role') },
-                    { name: t('committee.org.vice.4.name'), role: t('committee.org.vice.4.role') }
-                  ].map((member, i) => (
-                    <div key={i} className="p-6 border border-border bg-background">
-                      <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-2">{t('committee.vice')}</p>
-                      <h4 className="text-lg font-bold text-foreground">{member.name}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">{member.role}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="pt-8 border-t border-border">
-                  <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground mb-6">{t('committee.members')}</h4>
-                  <div className="grid sm:grid-cols-2 gap-x-12 gap-y-4">
-                    {[
-                      { name: t('committee.org.members.1.name'), org: t('committee.org.members.1.role') },
-                      { name: t('committee.org.members.2.name'), org: t('committee.org.members.2.role') },
-                      { name: t('committee.org.members.3.name'), org: t('committee.org.members.3.role') },
-                      { name: t('committee.org.members.4.name'), org: t('committee.org.members.4.role') },
-                      { name: t('committee.org.members.5.name'), org: t('committee.org.members.5.role') },
-                      { name: t('committee.org.members.6.name'), org: t('committee.org.members.6.role') }
-                    ].map((member, i) => (
-                      <div key={i} className="flex flex-col py-2 border-b border-border/50 last:border-0">
-                        <span className="text-sm font-medium text-foreground">{member.name}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{member.org}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+          {loadingCommittees ? (
+            <div className="flex justify-center items-center min-h-[400px]">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-conference-accent border-t-transparent mb-4" />
+                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Загрузка комитетов...</p>
               </div>
             </div>
+          ) : (
+            <div className="grid lg:grid-cols-2 gap-20">
+              {committees.map((committee) => {
+                const chairman = committee.members.find((m: any) => m.role === 'chairman');
+                const vices = committee.members.filter((m: any) => m.role === 'vice');
+                const members = committee.members.filter((m: any) => m.role === 'member');
 
-            {/* Program Committee */}
-            <div className="space-y-12">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-[1px] w-12 bg-conference-accent" />
-                <h3 className="text-xl uppercase tracking-widest font-bold text-foreground">{t('committee.prog')}</h3>
-              </div>
-              
-              <div className="space-y-8">
-                <div className="p-8 border border-conference-accent/20 bg-card rounded-none flex flex-col md:flex-row gap-8 items-center md:items-start">
-                  <div className="w-32 h-32 shrink-0 overflow-hidden grayscale hover:grayscale-0 transition-all duration-500">
-                    <img
-                      src="https://picsum.photos/seed/chairman-prog/300/300"
-                      alt={t('committee.prog.chairman.name')}
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-widest font-bold text-conference-accent mb-2">{t('committee.chairman')}</p>
-                    <h4 className="text-2xl font-serif text-foreground">{t('committee.prog.chairman.name')}</h4>
-                    <p className="text-sm text-muted-foreground mt-2">{t('committee.prog.chairman.role')}</p>
-                  </div>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-6">
-                  {[
-                    { name: t('committee.prog.vice.1.name'), role: t('committee.prog.vice.1.role') },
-                    { name: t('committee.prog.vice.2.name'), role: t('committee.prog.vice.2.role') },
-                    { name: t('committee.prog.vice.3.name'), role: t('committee.prog.vice.3.role') },
-                    { name: t('committee.prog.vice.4.name'), role: t('committee.prog.vice.4.role') }
-                  ].map((member, i) => (
-                    <div key={i} className="p-6 border border-border bg-background">
-                      <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-2">{t('committee.vice')}</p>
-                      <h4 className="text-lg font-bold text-foreground">{member.name}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">{member.role}</p>
+                return (
+                  <div key={committee.id} className="space-y-12">
+                    <div className="flex items-center gap-4 mb-8">
+                      <div className="h-[1px] w-12 bg-conference-accent" />
+                      <h3 className="text-xl uppercase tracking-widest font-bold text-foreground">{committee.name}</h3>
                     </div>
-                  ))}
-                </div>
 
-                <div className="pt-8 border-t border-border">
-                  <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground mb-6">{t('committee.members')}</h4>
-                  <div className="grid sm:grid-cols-2 gap-x-12 gap-y-4">
-                    {[
-                      { name: t('committee.prog.members.1.name'), org: t('committee.prog.members.1.role') },
-                      { name: t('committee.prog.members.2.name'), org: t('committee.prog.members.2.role') },
-                      { name: t('committee.prog.members.3.name'), org: t('committee.prog.members.3.role') },
-                      { name: t('committee.prog.members.4.name'), org: t('committee.prog.members.4.role') },
-                      { name: t('committee.prog.members.5.name'), org: t('committee.prog.members.5.role') },
-                      { name: t('committee.prog.members.6.name'), org: t('committee.prog.members.6.role') }
-                    ].map((member, i) => (
-                      <div key={i} className="flex flex-col py-2 border-b border-border/50 last:border-0">
-                        <span className="text-sm font-medium text-foreground">{member.name}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{member.org}</span>
-                      </div>
-                    ))}
+                    <div className="space-y-8">
+                      {/* Chairman */}
+                      {chairman && (
+                        <div className="p-8 border border-conference-accent/20 bg-card rounded-none flex flex-col md:flex-row gap-8 items-center md:items-start">
+                          {chairman.photo && (
+                            <div className="w-32 h-32 shrink-0 overflow-hidden rounded-full hover:scale-105 transition-all duration-500">
+                              <img
+                                src={chairman.photo}
+                                alt={chairman.full_name}
+                                className="w-full h-full object-cover"
+                                referrerPolicy="no-referrer"
+                              />
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-[10px] uppercase tracking-widest font-bold text-conference-accent mb-2">{t('committee.chairman')}</p>
+                            <h4 className="text-2xl font-serif text-foreground">{chairman.full_name}</h4>
+                            <p className="text-sm text-muted-foreground mt-2">{chairman.position}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Vice Chairmen */}
+                      {vices.length > 0 && (
+                        <div className="grid sm:grid-cols-2 gap-6">
+                          {vices.map((member: any) => (
+                            <div key={member.id} className="p-6 border border-border bg-background">
+                              <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-2">{t('committee.vice')}</p>
+                              <h4 className="text-lg font-bold text-foreground">{member.full_name}</h4>
+                              <p className="text-xs text-muted-foreground mt-1">{member.position}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Members */}
+                      {members.length > 0 && (
+                        <div className="pt-8 border-t border-border">
+                          <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground mb-6">{t('committee.members')}</h4>
+                          <div className="grid sm:grid-cols-2 gap-x-12 gap-y-4">
+                            {members.map((member: any) => (
+                              <div key={member.id} className="flex flex-col py-2 border-b border-border/50 last:border-0">
+                                <span className="text-sm font-medium text-foreground">{member.full_name}</span>
+                                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{member.position}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
-          </div>
+          )}
         </div>
       </section>
 

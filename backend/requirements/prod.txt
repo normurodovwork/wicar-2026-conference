@@ -1,0 +1,5 @@
+-r base.txt
+gunicorn>=21.2,<23.0
+psycopg2-binary>=2.9,<3.0
+django-jazzmin>=3.0,<4.0
+whitenoise>=6.6,<7.0

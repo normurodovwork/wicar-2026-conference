@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { api } from '@/src/lib/api';
 import { toast } from 'sonner';
 import { useLanguage } from '@/src/components/LanguageProvider';
-import { FileText, CheckCircle, Clock, XCircle, LayoutDashboard, Settings, Image as ImageIcon, ShieldCheck, Download, Trash2 } from 'lucide-react';
+import { FileText, CheckCircle, Clock, XCircle, LayoutDashboard, Settings, Image as ImageIcon, ShieldCheck, Download, Trash2, CreditCard, Smartphone, Mail, Phone } from 'lucide-react';
 
 interface FileUploadCardProps {
   type: string;
@@ -77,10 +77,69 @@ const FileUploadCard = ({ type, title, description, icon: Icon, accept, file, is
   </div>
 );
 
+// Компонент карты оплаты
+const PaymentCard = ({ paymentInfo, amount, currency, shouldPay, message, paymentConfirmed }: { paymentInfo: any, amount: number, currency: string, shouldPay: boolean, message: string, paymentConfirmed?: boolean }) => (
+  <div className="p-6 border border-border bg-gradient-to-br from-card to-muted/30 space-y-6 rounded-xl">
+    {/* Статус подтверждения */}
+    {paymentConfirmed && (
+      <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-2">
+        <CheckCircle className="h-5 w-5 text-green-500 shrink-0" />
+        <p className="text-xs font-bold text-green-600">Оплата подтверждена организатором</p>
+      </div>
+    )}
+    
+    {/* Сумма оплаты */}
+    <div className={`p-4 rounded-lg ${shouldPay ? 'bg-green-500/10 border border-green-500/20' : 'bg-amber-500/10 border border-amber-500/20'}`}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-1">Сумма оплаты</p>
+          {shouldPay && amount > 0 ? (
+            <p className="text-3xl font-bold text-green-600">
+              {amount.toLocaleString()} <span className="text-lg">{currency}</span>
+            </p>
+          ) : (
+            <p className="text-lg font-bold text-amber-600">Не требуется оплата</p>
+          )}
+        </div>
+        {shouldPay && amount > 0 && <CheckCircle className="h-8 w-8 text-green-500" />}
+      </div>
+      <p className="text-xs text-muted-foreground mt-2">{message}</p>
+    </div>
+
+    {/* Карта */}
+    {shouldPay && amount > 0 && (
+      <>
+        <div className="p-6 bg-gradient-to-br from-conference-blue to-conference-blue-deep text-white rounded-xl shadow-lg">
+          <div className="flex justify-between items-start mb-8">
+            <CreditCard className="h-8 w-8 opacity-80" />
+            <span className="text-xs font-bold opacity-60">{paymentInfo.card_bank}</span>
+          </div>
+          <div className="mb-6">
+            <p className="text-2xl font-mono tracking-widest">{paymentInfo.card_number}</p>
+          </div>
+          <div className="flex justify-between items-end">
+            <div>
+              <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">Владелец карты</p>
+              <p className="text-sm font-bold uppercase">{paymentInfo.card_holder}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">Сумма</p>
+              <p className="text-xl font-bold">{amount.toLocaleString()} {currency}</p>
+            </div>
+          </div>
+        </div>
+      </>
+    )}
+  </div>
+);
+
 export default function Dashboard() {
   const { t } = useLanguage();
   const [user, setUser] = useState<any>(null);
   const [application, setApplication] = useState<any>(null);
+  const [participant, setParticipant] = useState<any>(null);
+  const [paymentInfo, setPaymentInfo] = useState<any>(null);
+  const [paymentCalculation, setPaymentCalculation] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingType, setUploadingType] = useState<string | null>(null);
@@ -101,6 +160,7 @@ export default function Dashboard() {
   const [form, setForm] = useState({
     direction: '',
     participation_format: '',
+    is_foreign: false,
     affiliation: '',
     position: '',
     talk_type: '',
@@ -118,8 +178,58 @@ export default function Dashboard() {
     try {
       const userData = await api.get('/api/me', token!);
       const appData = await api.get('/api/application', token!);
+      
       setUser(userData);
       setApplication(appData);
+      
+      // Загружаем данные участника
+      try {
+        const participantData = await api.get('/api/participants/me', token!);
+        if (participantData) {
+          setParticipant(participantData);
+          // Обновляем application файлами и статусом из participant
+          setApplication((prev: any) => ({
+            ...prev,
+            status: participantData.status || prev?.status,  // Статус из Participant
+            files: [
+              participantData.has_article ? {
+                id: 'article',
+                type: 'article',
+                original_name: participantData.article_file_url?.split('/').pop() || 'Статья',
+                file_url: participantData.article_file_url || ''
+              } : null,
+              participantData.has_plagiarism ? {
+                id: 'plagiarism',
+                type: 'plagiarism',
+                original_name: participantData.plagiarism_file_url?.split('/').pop() || 'Антиплагиат',
+                file_url: participantData.plagiarism_file_url || ''
+              } : null,
+              participantData.payment_file_url ? {
+                id: 'payment',
+                type: 'payment',
+                original_name: participantData.payment_file_url?.split('/').pop() || 'Чек',
+                file_url: participantData.payment_file_url || ''
+              } : null,
+            ].filter(Boolean)
+          }));
+        }
+      } catch (err) {
+        // Participant ещё не создан
+        console.log('Participant data not available');
+      }
+      
+      // Загружаем информацию об оплате
+      try {
+        const [paymentCalc, paymentInfoData] = await Promise.all([
+          api.get('/api/payment-calculation', token!),
+          api.get('/api/payment-info'),
+        ]);
+        setPaymentCalculation(paymentCalc);
+        setPaymentInfo(paymentInfoData);
+      } catch (err) {
+        console.log('Payment info not available');
+      }
+      
       if (userData) {
         setSettingsForm((prev) => ({
           ...prev,
@@ -132,6 +242,7 @@ export default function Dashboard() {
         setForm({
           direction: appData.direction,
           participation_format: appData.participation_format,
+          is_foreign: appData.is_foreign || false,
           affiliation: appData.affiliation || '',
           position: appData.position || '',
           talk_type: appData.talk_type || '',
@@ -175,7 +286,9 @@ export default function Dashboard() {
       toast.info(t('dashboard.file_uploading_toast'));
       await api.upload('/api/upload', formData, token!);
       toast.success(t('dashboard.file_upload_success'));
-      fetchData();
+      
+      // Перезагружаем данные чтобы обновить participant
+      await fetchData();
     } catch (err: any) {
       toast.error(t('dashboard.file_upload_error_prefix') + err.message);
     } finally {
@@ -295,6 +408,42 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Mobile Info Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-border p-3">
+        <div className="flex gap-3 overflow-x-auto">
+          {/* Статус заявки */}
+          <div className="shrink-0 p-3 bg-muted rounded-lg min-w-[140px]">
+            <p className="text-[8px] uppercase tracking-widest font-bold text-muted-foreground mb-1">Заявка</p>
+            {application ? getStatusBadge(application.status) : <p className="text-[10px] italic text-muted-foreground">Нет</p>}
+          </div>
+          
+          {/* Статус оплаты */}
+          {application && (
+            <div className={`shrink-0 p-3 rounded-lg min-w-[140px] ${participant?.payment_confirmed ? 'bg-green-500/10 border border-green-500/20' : 'bg-muted'}`}>
+              <p className="text-[8px] uppercase tracking-widest font-bold text-muted-foreground mb-1">Оплата</p>
+              {participant?.payment_confirmed ? (
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="h-3 w-3 text-green-500" />
+                  <span className="text-[10px] font-bold text-green-600">Да</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Clock className="h-3 w-3 text-amber-500" />
+                  <span className="text-[10px] font-bold text-amber-600">Нет</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Telegram Support */}
+          {paymentInfo && (
+            <a href={`https://t.me/${paymentInfo.telegram_contact?.replace('+', '')}`} target="_blank" rel="noreferrer" className="shrink-0 p-3 bg-blue-500/10 text-blue-500 rounded-lg flex items-center justify-center min-w-[48px]">
+              <Smartphone className="h-5 w-5" />
+            </a>
+          )}
+        </div>
+      </div>
+
       <div className="flex flex-col lg:flex-row h-[calc(100vh-3.5rem)] lg:h-[calc(100vh-4rem)]">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:flex w-72 border-r border-border flex-col bg-muted/30">
@@ -331,16 +480,68 @@ export default function Dashboard() {
             ))}
           </nav>
 
-          <div className="p-6 border-t border-border">
+          <div className="p-6 border-t border-border space-y-3">
             <div className="p-4 bg-muted rounded-xl">
               <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-2">{t('dashboard.application_status')}</p>
               {application ? getStatusBadge(application.status) : <p className="text-xs font-bold italic text-muted-foreground">{t('dashboard.no_application')}</p>}
             </div>
+            
+            {/* Статус оплаты */}
+            {application && (
+              <div className={`p-4 rounded-xl ${participant?.payment_confirmed ? 'bg-green-500/10 border border-green-500/20' : 'bg-muted'}`}>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-2">Статус оплаты</p>
+                {participant?.payment_confirmed ? (
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <span className="text-xs font-bold text-green-600">Подтверждена</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-amber-500" />
+                    <span className="text-xs font-bold text-amber-600">Не подтверждена</span>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Инструкция */}
+            <div className="p-4 bg-muted/50 rounded-xl space-y-2">
+              <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t('dashboard.instructions')}</p>
+              <ol className="space-y-1.5 text-[10px] text-muted-foreground">
+                <li><strong className="text-foreground">1.</strong> {t('dashboard.instr_1')}</li>
+                <li><strong className="text-foreground">2.</strong> {t('dashboard.instr_2')}</li>
+                <li><strong className="text-foreground">3.</strong> {t('dashboard.instr_3')}</li>
+                <li><strong className="text-foreground">4.</strong> {t('dashboard.instr_4')}</li>
+                <li><strong className="text-foreground">5.</strong> {t('dashboard.instr_5')}</li>
+                <li><strong className="text-foreground">6.</strong> {t('dashboard.instr_6')}</li>
+              </ol>
+            </div>
+
+            {/* Контакты */}
+            {paymentInfo && (
+              <div className="p-4 border-t border-border bg-muted/30 rounded-b-xl space-y-3">
+                <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Контакты</p>
+                <div className="space-y-2">
+                  <a href={`https://t.me/${paymentInfo.telegram_contact?.replace('+', '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                    <Smartphone className="h-3.5 w-3.5" />
+                    Telegram
+                  </a>
+                  <a href={`tel:${paymentInfo.contact_phone}`} className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                    <Phone className="h-3.5 w-3.5" />
+                    {paymentInfo.contact_phone}
+                  </a>
+                  <a href={`mailto:${paymentInfo.contact_email}`} className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                    <Mail className="h-3.5 w-3.5" />
+                    Email
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 pb-24 lg:pb-10">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 pb-32 lg:pb-10">
           {activeTab === 'overview' ? (
             <div className="max-w-4xl mx-auto space-y-6 sm:space-y-10">
               <header className="hidden sm:block">
@@ -363,8 +564,8 @@ export default function Dashboard() {
                 </div>
 
                 <div className="space-y-4 sm:space-y-6">
-                  {/* Row 1: Direction & Format */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  {/* Row 1: Direction & Format & Talk Type */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4">
                     <div className="space-y-3">
                       <Label className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t('dashboard.direction_label')}</Label>
                       <Select
@@ -398,6 +599,40 @@ export default function Dashboard() {
                         </SelectContent>
                       </Select>
                     </div>
+                    <div className="space-y-3">
+                      <Label className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t('dashboard.talk_type_label')}</Label>
+                      <Select
+                        value={form.talk_type}
+                        onValueChange={(v) => setForm({ ...form, talk_type: v })}
+                        disabled={application?.status === 'approved'}
+                      >
+                        <SelectTrigger className="h-11 sm:h-12 rounded-lg border-border focus:ring-conference-accent bg-background text-sm">
+                          <SelectValue placeholder={t('dashboard.talk_type_placeholder')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Plenary">{t('dashboard.talk_plenary')}</SelectItem>
+                          <SelectItem value="Sectional">{t('dashboard.talk_section')}</SelectItem>
+                          <SelectItem value="Panel">{t('dashboard.talk_panel')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Row 2: Foreign Participant Toggle */}
+                  <div className="p-4 border border-border bg-card rounded-lg">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={form.is_foreign}
+                        onChange={(e) => setForm({ ...form, is_foreign: e.target.checked })}
+                        disabled={application?.status === 'approved'}
+                        className="w-5 h-5 rounded border-border text-conference-accent focus:ring-conference-accent disabled:opacity-50"
+                      />
+                      <div>
+                        <span className="text-sm font-bold text-foreground">{t('dashboard.is_foreign_label')}</span>
+                        <p className="text-xs text-muted-foreground">{t('dashboard.is_foreign_desc')}</p>
+                      </div>
+                    </label>
                   </div>
 
                   {/* Row 2: Affiliation & Position */}
@@ -435,25 +670,6 @@ export default function Dashboard() {
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
-
-                  {/* Row 3: Talk Type */}
-                  <div className="space-y-3">
-                    <Label className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t('dashboard.talk_type_label')}</Label>
-                    <Select
-                      value={form.talk_type}
-                      onValueChange={(v) => setForm({ ...form, talk_type: v })}
-                      disabled={application?.status === 'approved'}
-                    >
-                      <SelectTrigger className="h-11 sm:h-12 rounded-lg border-border focus:ring-conference-accent bg-background text-sm">
-                        <SelectValue placeholder={t('dashboard.talk_type_placeholder')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Plenary">{t('dashboard.talk_plenary')}</SelectItem>
-                        <SelectItem value="Sectional">{t('dashboard.talk_section')}</SelectItem>
-                        <SelectItem value="Panel">{t('dashboard.talk_panel')}</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
                 </div>
 
@@ -501,35 +717,67 @@ export default function Dashboard() {
                       onDelete={handleFileDelete}
                       t={t}
                     />
-
-                    <FileUploadCard
-                      type="payment"
-                      title={t('dashboard.file_payment')}
-                      description={t('dashboard.file_desc_img')}
-                      icon={ImageIcon}
-                      accept=".jpg,.jpeg,.png,.gif,.webp,.bmp"
-                      file={getFileByType('payment')}
-                      isUploading={uploadingType === 'payment'}
-                      onUpload={handleFileUpload}
-                      onDelete={handleFileDelete}
-                      t={t}
-                    />
                   </div>
                 </section>
               )}
 
-              {/* Info Panel */}
-              <section className="p-4 sm:p-6 border border-border bg-muted/20 rounded-xl space-y-3 sm:space-y-4">
-                <h4 className="text-[10px] sm:text-xs uppercase tracking-widest font-bold text-muted-foreground">{t('dashboard.instructions')}</h4>
-                <ol className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-                  <li><strong className="text-foreground">1.</strong> {t('dashboard.instr_1')}</li>
-                  <li><strong className="text-foreground">2.</strong> {t('dashboard.instr_2')}</li>
-                  <li><strong className="text-foreground">3.</strong> {t('dashboard.instr_3')}</li>
-                  <li><strong className="text-foreground">4.</strong> {t('dashboard.instr_4')}</li>
-                  <li><strong className="text-foreground">5.</strong> {t('dashboard.instr_5')}</li>
-                  <li><strong className="text-foreground">6.</strong> {t('dashboard.instr_6')}</li>
-                </ol>
-              </section>
+              {/* Step 3: Payment */}
+              {application && paymentCalculation && paymentInfo && (
+                <section className="space-y-4 sm:space-y-6">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <span className="text-[10px] sm:text-xs font-mono text-conference-accent font-bold">{t('dashboard.step_3') || 'Шаг 3'}</span>
+                    <h2 className="text-sm sm:text-lg font-bold uppercase tracking-widest text-foreground">Оплата</h2>
+                    <div className="h-px flex-1 bg-border" />
+                  </div>
+
+                  <PaymentCard
+                    paymentInfo={paymentInfo}
+                    amount={paymentCalculation.amount || 0}
+                    currency={paymentCalculation.currency || 'UZS'}
+                    shouldPay={paymentCalculation.should_pay || false}
+                    message={paymentCalculation.message || ''}
+                    paymentConfirmed={participant?.payment_confirmed || false}
+                  />
+
+                  {/* Статус подтверждения оплаты */}
+                  {participant?.payment_confirmed && (
+                    <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-3">
+                      <CheckCircle className="h-6 w-6 text-green-500 shrink-0" />
+                      <div>
+                        <p className="text-sm font-bold text-green-600">Оплата подтверждена организатором</p>
+                        <p className="text-xs text-muted-foreground">Ваш организационный взнос успешно подтверждён</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Загрузка чека */}
+                  {paymentCalculation.should_pay && paymentCalculation.amount > 0 && (
+                    <div className="p-6 border border-border bg-card rounded-xl space-y-4">
+                      <h3 className="text-sm font-bold uppercase tracking-widest text-foreground flex items-center gap-2">
+                        <ImageIcon className="h-4 w-4" />
+                        Загрузить чек об оплате
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        После перевода средств загрузите скриншот или фото чека для подтверждения оплаты
+                      </p>
+                      <FileUploadCard
+                        type="payment"
+                        title={t('dashboard.file_payment')}
+                        description={t('dashboard.file_desc_img')}
+                        icon={ImageIcon}
+                        accept=".jpg,.jpeg,.png,.gif,.webp,.bmp"
+                        file={getFileByType('payment')}
+                        isUploading={uploadingType === 'payment'}
+                        onUpload={handleFileUpload}
+                        onDelete={handleFileDelete}
+                        t={t}
+                      />
+                    </div>
+                  )}
+                </section>
+              )}
+
+              {/* Info Panel - удалён, перенесён в sidebar */}
             </div>
           ) : (
             /* Settings Tab */

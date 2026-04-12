@@ -10,9 +10,10 @@ export const api = {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (!res.ok) {
-        const text = await res.text();
-        console.error(`API Error (${res.status}) for ${endpoint}: ${text}`);
-        throw new Error(text);
+        const errorData = await res.json().catch(() => null);
+        const errorMessage = errorData?.error || errorData?.detail || errorData?.message || JSON.stringify(errorData) || `Error ${res.status}`;
+        console.error(`API Error (${res.status}) for ${endpoint}: ${errorMessage}`);
+        throw new Error(errorMessage);
       }
       return res.json();
     } catch (err) {
@@ -33,12 +34,13 @@ export const api = {
         body: JSON.stringify(data),
       });
       if (!res.ok) {
-        const text = await res.text();
-        console.error(`API Error (${res.status}): ${text}`);
-        throw new Error(text);
+        const errorData = await res.json().catch(() => null);
+        const errorMessage = errorData?.error || errorData?.detail || errorData?.message || JSON.stringify(errorData) || `Error ${res.status}`;
+        console.error(`API Error (${res.status}): ${errorMessage}`);
+        throw new Error(errorMessage);
       }
       return res.json();
-    } catch (err) {
+    } catch (err: any) {
       console.error(`Post failed for ${endpoint}:`, err);
       throw err;
     }
@@ -56,12 +58,13 @@ export const api = {
         body: JSON.stringify(data),
       });
       if (!res.ok) {
-        const text = await res.text();
-        console.error(`API Error (${res.status}): ${text}`);
-        throw new Error(text);
+        const errorData = await res.json().catch(() => null);
+        const errorMessage = errorData?.error || errorData?.detail || errorData?.message || JSON.stringify(errorData) || `Error ${res.status}`;
+        console.error(`API Error (${res.status}): ${errorMessage}`);
+        throw new Error(errorMessage);
       }
       return res.json();
-    } catch (err) {
+    } catch (err: any) {
       console.error(`Put failed for ${endpoint}:`, err);
       throw err;
     }
@@ -77,12 +80,13 @@ export const api = {
         body: formData,
       });
       if (!res.ok) {
-        const text = await res.text();
-        console.error(`Upload Error (${res.status}) for ${endpoint}: ${text}`);
-        throw new Error(text);
+        const errorData = await res.json().catch(() => null);
+        const errorMessage = errorData?.error || errorData?.detail || errorData?.message || JSON.stringify(errorData) || `Error ${res.status}`;
+        console.error(`Upload Error (${res.status}) for ${endpoint}: ${errorMessage}`);
+        throw new Error(errorMessage);
       }
       return res.json();
-    } catch (err) {
+    } catch (err: any) {
       console.error(`Upload failed for ${endpoint}:`, err);
       throw err;
     }
@@ -97,12 +101,13 @@ export const api = {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (!res.ok) {
-        const text = await res.text();
-        console.error(`API Error (${res.status}) for ${endpoint}: ${text}`);
-        throw new Error(text);
+        const errorData = await res.json().catch(() => null);
+        const errorMessage = errorData?.error || errorData?.detail || errorData?.message || JSON.stringify(errorData) || `Error ${res.status}`;
+        console.error(`API Error (${res.status}) for ${endpoint}: ${errorMessage}`);
+        throw new Error(errorMessage);
       }
       return res.json();
-    } catch (err) {
+    } catch (err: any) {
       console.error(`Delete failed for ${endpoint}:`, err);
       throw err;
     }
