@@ -74,7 +74,7 @@ export default function Navbar() {
                     }
                   }
                 }}
-                className="text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground hover:text-conference-accent transition-colors"
+                className={`text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground hover:text-conference-accent transition-colors ${language === 'uz' ? 'text-[10px]' : ''}`}
               >
                 {t(item.key)}
               </a>
@@ -137,7 +137,7 @@ export default function Navbar() {
 
               <Link
                 to={token ? "/dashboard" : "/register"}
-                className={cn(buttonVariants({ variant: "default" }), "bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground px-6 sm:px-8 rounded-full text-xs uppercase tracking-widest font-bold transition-all shadow-lg shadow-conference-blue/10")}
+                className={cn(buttonVariants({ variant: "default" }), `bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground px-6 sm:px-8 rounded-full ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold transition-all shadow-lg shadow-conference-blue/10`)}
               >
                 {token ? t('navbar.cabinet') : t('nav.apply')}
               </Link>
@@ -173,7 +173,7 @@ export default function Navbar() {
                   e.preventDefault();
                   handleNavClick(item.href);
                 }}
-                className="block text-sm uppercase tracking-[0.15em] font-semibold text-muted-foreground hover:text-conference-accent transition-colors py-2"
+                className={`block uppercase tracking-[0.15em] font-semibold text-muted-foreground hover:text-conference-accent transition-colors py-2 ${language === 'uz' ? 'text-xs' : 'text-sm'}`}
               >
                 {t(item.key)}
               </a>
@@ -185,14 +185,14 @@ export default function Navbar() {
                   <Link
                     to="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={cn(buttonVariants({ variant: "default" }), "w-full bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground text-xs uppercase tracking-widest font-bold")}
+                    className={cn(buttonVariants({ variant: "default" }), `w-full bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold`)}
                   >
                     <User className="h-4 w-4 mr-2" />
                     {t('navbar.cabinet')}
                   </Link>
                   <Button
                     variant="outline"
-                    className="w-full text-xs uppercase tracking-widest font-bold"
+                    className={`w-full ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold`}
                     onClick={() => {
                       handleLogout();
                       setMobileMenuOpen(false);
@@ -207,14 +207,14 @@ export default function Navbar() {
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={cn(buttonVariants({ variant: "outline" }), "w-full text-xs uppercase tracking-widest font-bold")}
+                    className={cn(buttonVariants({ variant: "outline" }), `w-full ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold`)}
                   >
                     {t('nav.login')}
                   </Link>
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={cn(buttonVariants({ variant: "default" }), "w-full bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground text-xs uppercase tracking-widest font-bold")}
+                    className={cn(buttonVariants({ variant: "default" }), `w-full bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold`)}
                   >
                     {t('nav.apply')}
                   </Link>
