@@ -58,12 +58,14 @@ class FileUploadView(generics.GenericAPIView):
         """Отправка уведомления админам о загрузке чека."""
         try:
             from apps.participants.models import Participant
-            from apps.telegram_bot.bot import send_payment_notification
+            from apps.telegram_bot.bot import send_payment_notification_sync
             
             participant = Participant.objects.get(user=user)
-            # Запускаем уведомление в фоне
-            import asyncio
-            asyncio.create_task(send_payment_notification(participant))
+            # Запускаем в отдельном потоке
+            send_payment_notification_sync(participant.id)
+        except Participant.DoesNotExist:
+            # Participant ещё не создан
+            pass
         except Exception as e:
             # Не прерываем загрузку файла из-за ошибок уведомления
             import logging

@@ -140,9 +140,27 @@ docker-compose -f docker-compose.prod.yml up -d
 | `npm run django:populate-committees` | Заполнить комитеты           |
 | `npm run django:populate-participants` | Заполнить участников        |
 | `npm run django:populate-payment` | Заполнить данные об оплате        |
+| `npm run django:runbot`           | Запуск Telegram бота              |
 
 ## 🌐 Локализация
 
 Поддержка 3 языков: 🇷🇺 Русский, 🇬🇧 English, 🇺🇿 O'zbekcha
 
 Переключение языка в навигационной панели.
+
+## 🤖 Telegram Бот
+
+Бот уведомляет администраторов о загрузке чеков об оплате и позволяет подтверждать их прямо в чате.
+
+### Настройка:
+1. Создайте бота через **@BotFather** и получите токен.
+2. Добавьте `TELEGRAM_BOT_TOKEN` в ваш `.env` или `.env.production`.
+3. Добавьте себя в админ-панель Django (`/admin/telegram_bot/telegramadmin/`) указав ваш **Chat ID** (узнайте его командой `/id` в боте).
+
+### Запуск:
+```bash
+npm run django:runbot
+```
+
+### В Docker:
+Бот запускается автоматически при запуске `docker-compose` (сервис `telegram_bot`).

@@ -37,6 +37,15 @@ services:
       - django
     restart: unless-stopped
 
+  telegram_bot:
+    build: .
+    env_file: .env.production
+    command: python manage.py runbot
+    depends_on:
+      - db
+      - django
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   media_data:

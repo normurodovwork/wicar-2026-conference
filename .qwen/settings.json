@@ -17,7 +17,8 @@
       "Bash(pip install *)",
       "Bash(django-admin *)",
       "Bash(move *)",
-      "Bash(tasklist)"
+      "Bash(tasklist)",
+      "Bash(echo *)"
     ]
   },
   "$version": 3
