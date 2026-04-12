@@ -507,19 +507,6 @@ export default function Dashboard() {
               </div>
             )}
             
-            {/* Инструкция */}
-            <div className="p-4 bg-muted/50 rounded-xl space-y-2">
-              <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t('dashboard.instructions')}</p>
-              <ol className="space-y-1.5 text-[10px] text-muted-foreground">
-                <li><strong className="text-foreground">1.</strong> {t('dashboard.instr_1')}</li>
-                <li><strong className="text-foreground">2.</strong> {t('dashboard.instr_2')}</li>
-                <li><strong className="text-foreground">3.</strong> {t('dashboard.instr_3')}</li>
-                <li><strong className="text-foreground">4.</strong> {t('dashboard.instr_4')}</li>
-                <li><strong className="text-foreground">5.</strong> {t('dashboard.instr_5')}</li>
-                <li><strong className="text-foreground">6.</strong> {t('dashboard.instr_6')}</li>
-              </ol>
-            </div>
-
             {/* Контакты */}
             {paymentInfo && (
               <div className="p-4 border-t border-border bg-muted/30 rounded-b-xl space-y-3">
