@@ -16,10 +16,12 @@ class ConferenceFile(models.Model):
         ('info_letter_2', '2-е информационное письмо'),
         ('collection', 'Сборник тезисов'),
         ('program', 'Программа конференции'),
+        ('gallery', 'Галерея'),
     ]
-    
+
     file_type = models.CharField(max_length=20, choices=FILE_TYPE_CHOICES, unique=True, verbose_name='Тип файла')
-    file = models.FileField(upload_to=conference_file_path, verbose_name='Файл')
+    file = models.FileField(upload_to=conference_file_path, blank=True, null=True, verbose_name='Файл')
+    gallery_url = models.URLField(blank=True, null=True, verbose_name='Ссылка на галерею (Google Drive)')
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата загрузки')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
     

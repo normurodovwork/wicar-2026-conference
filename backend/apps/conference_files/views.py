@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from .models import ConferenceFile
@@ -11,7 +12,9 @@ class ConferenceFilesListView(generics.ListAPIView):
     pagination_class = None
     
     def get_queryset(self):
-        return ConferenceFile.objects.filter(file__isnull=False).order_by('file_type')
+        return ConferenceFile.objects.filter(
+            models.Q(file__isnull=False) | models.Q(file_type='gallery', gallery_url__isnull=False)
+        ).order_by('file_type')
 
 
 class ConferenceFileDetailView(generics.RetrieveUpdateAPIView):

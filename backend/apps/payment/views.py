@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from .models import PaymentInfo
@@ -9,7 +9,7 @@ class PaymentInfoView(generics.RetrieveAPIView):
     """Получение информации об оплате для текущего пользователя."""
     serializer_class = PaymentInfoSerializer
     permission_classes = [permissions.AllowAny]
-    
+
     def get_object(self):
         """Получаем активную запись оплаты или создаём дефолтную."""
         payment_info = PaymentInfo.objects.filter(is_active=True).first()
@@ -26,6 +26,47 @@ class PaymentInfoView(generics.RetrieveAPIView):
                 telegram_contact='+998 90 985 80 44',
             )
         return payment_info
+
+
+class PaymentInfoAdminView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
+    """Получение списка и управление записями оплаты (только для администраторов)."""
+    serializer_class = PaymentInfoSerializer
+    permission_classes = [permissions.IsAdminUser]
+    queryset = PaymentInfo.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        # Если есть pk в kwargs, возвращаем один объект, иначе список
+        if kwargs.get('pk'):
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        """Список всех записей оплаты."""
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        """Получение одной записи оплаты."""
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        """Обновление записи оплаты."""
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        """Удаление записи оплаты (мягкое - ставим is_active=False)."""
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response({'message': 'Запись деактивирована'}, status=status.HTTP_200_OK)
 
 
 class PaymentCalculationView(generics.GenericAPIView):
@@ -60,7 +101,7 @@ class PaymentCalculationView(generics.GenericAPIView):
         
         # Проверяем статус
         if participant.status != 'approved':
-            message = 'Оплата возможна только после одобрения заявки организационным комитетом.'
+            message = 'pending_approval'
         else:
             should_pay = True
             # Иностранные участники в онлайн-формате не платят

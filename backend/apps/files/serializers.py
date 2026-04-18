@@ -4,8 +4,8 @@ from .models import File
 
 # Допустимые расширения файлов по типу
 VALID_EXTENSIONS = {
-    'article': ['.pdf', '.doc', '.docx', '.txt', '.rtf'],
-    'plagiarism': ['.pdf', '.doc', '.docx', '.txt', '.rtf'],
+    'article': ['.doc', '.docx', '.txt', '.rtf'],
+    'plagiarism': ['.doc', '.docx', '.txt', '.rtf'],
     'payment': ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'],
     'info_letter': ['.pdf', '.doc', '.docx', '.txt', '.rtf'],
     'collection': ['.pdf', '.doc', '.docx', '.txt', '.rtf'],

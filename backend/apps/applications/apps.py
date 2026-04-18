@@ -5,3 +5,7 @@ class ApplicationsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.applications'
     label = 'applications'
+
+    def ready(self):
+        """Импортируем signals при загрузке приложения."""
+        import apps.applications.signals  # noqa

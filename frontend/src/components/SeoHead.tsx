@@ -1,20 +1,35 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useLanguage } from './LanguageProvider';
 
 export function SeoHead() {
   const { t } = useLanguage();
-  
+
   const title = t('hero.title');
   const description = t('hero.subtitle');
-  
-  return (
-    <React.Fragment>
-      <title>{title}</title>
-      <meta name="description" content={description} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:type" content="website" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-    </React.Fragment>
-  );
+
+  useEffect(() => {
+    document.title = title;
+
+    const setMeta = (name: string, content: string, isProperty = false) => {
+      const attr = isProperty ? 'property' : 'name';
+      let meta = document.querySelector(`meta[${attr}="${name}"]`);
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute(attr, name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    setMeta('description', description);
+    setMeta('og:title', title, true);
+    setMeta('og:description', description, true);
+    setMeta('og:type', 'website', true);
+
+    return () => {
+      document.title = 'WICAR 2026';
+    };
+  }, [title, description]);
+
+  return null;
 }

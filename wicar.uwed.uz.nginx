@@ -1,0 +1,63 @@
+upstream wicar_gunicorn {
+    server unix:/run/gunicorn-wicar.sock;
+}
+
+server {
+    server_name wicar.uwed.uz www.wicar.uwed.uz;
+
+    listen 443 ssl;
+    ssl_certificate      /usr/local/etc/ssl/certs/uwed.uz/fullchain.pem;
+    ssl_certificate_key  /usr/local/etc/ssl/certs/uwed.uz/privkey.pem;
+
+    location = /favicon.ico {
+        access_log off;
+        log_not_found off;
+    }
+
+    # Serve Django static files
+    location /static/ {
+        root /home/node_mmi/www/wicar/back;
+    }
+
+    # Serve media files uploaded by users
+    location /media/ {
+        root /home/node_mmi/www/wicar/back;
+    }
+
+    # Proxy API, Admin to Django/Gunicorn
+    location /api/ {
+        include proxy_params;
+        proxy_pass http://wicar_gunicorn;
+    }
+
+    location /admin/ {
+        include proxy_params;
+        proxy_pass http://wicar_gunicorn;
+    }
+
+    # Serve React SPA static files
+    location /assets/ {
+        root /home/node_mmi/www/wicar/front;
+        expires 30d;
+        add_header Cache-Control "public";
+    }
+
+    location /img/ {
+        root /home/node_mmi/www/wicar/front;
+    }
+
+    # All other requests go to React frontend (SPA fallback)
+    location / {
+        root /home/node_mmi/www/wicar/front;
+        try_files $uri $uri/ /index.html;
+    }
+
+    access_log /var/log/nginx/wicar.access.log;
+    error_log /var/log/nginx/wicar.error.log;
+}
+
+server {
+    listen 80;
+    server_name wicar.uwed.uz www.wicar.uwed.uz;
+    return 301 https://$host$request_uri;
+}

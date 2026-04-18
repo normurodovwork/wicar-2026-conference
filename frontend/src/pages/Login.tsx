@@ -3,9 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { api } from '@/src/lib/api';
+import { api } from '@/lib/api';
 import { toast } from 'sonner';
-import { useLanguage } from '@/src/components/LanguageProvider';
+import { useLanguage } from '@/components/LanguageProvider';
 import { ArrowRight, Lock, Mail } from 'lucide-react';
 
 export default function Login() {
@@ -36,14 +36,14 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4 pt-16 sm:pt-20">
       <div className="w-full max-w-[1000px] grid lg:grid-cols-2 border border-border shadow-2xl overflow-hidden">
         {/* Left Side - Visual/Info */}
-        <div className="hidden lg:flex flex-col justify-between p-12 bg-conference-blue text-conference-blue-foreground relative overflow-hidden">
+        <div className="hidden lg:flex flex-col justify-between p-12 bg-conference-blue text-white relative overflow-hidden">
           <div className="relative z-10">
             <div className="text-xs font-mono uppercase tracking-[0.3em] opacity-60 mb-8">WICAR 2026 / Auth</div>
-            <h2 className="text-5xl font-serif leading-tight mb-8">
+            <h2 className="text-5xl font-serif leading-tight mb-8 text-white">
               {t('login.title').split(' ')[0]} <br />
               <span className="text-conference-accent italic">{t('login.title').split(' ').slice(1).join(' ')}</span>
             </h2>
-            <p className="text-conference-blue-foreground/70 font-light leading-relaxed max-w-sm">
+            <p className="text-white/70 font-light leading-relaxed max-w-sm">
               {t('login.subtitle')}
             </p>
           </div>
@@ -65,7 +65,7 @@ export default function Login() {
         <div className="p-8 lg:p-16 bg-card flex flex-col justify-center">
           <div className="max-w-sm mx-auto w-full space-y-8">
             <header>
-              <h1 className="text-2xl font-bold text-foreground uppercase tracking-widest mb-2">{t('nav.login')}</h1>
+              <h1 className="text-2xl font-bold text-conference-blue-foreground uppercase tracking-widest mb-2">{t('nav.login')}</h1>
               <div className="h-1 w-12 bg-conference-accent" />
             </header>
 
@@ -105,11 +105,11 @@ export default function Login() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground h-12 rounded-none text-xs uppercase tracking-widest font-bold transition-all group" disabled={loading}>
+              <Button type="submit" className="w-full bg-conference-blue hover:bg-conference-accent text-white h-12 rounded-none text-xs uppercase tracking-widest font-bold transition-all group" disabled={loading}>
                 {loading ? t('auth.processing') : (
                   <>
                     {t('auth.login')}
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="ml-2 h-4 w-4 text-white group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
               </Button>

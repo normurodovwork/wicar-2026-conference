@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Droplets, User, LogOut, Menu, Moon, Sun, Languages, X } from 'lucide-react';
+import { User, LogOut, Menu, Moon, Sun, Languages, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useLanguage } from './LanguageProvider';
 import { cn } from '@/lib/utils';
@@ -47,20 +47,20 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/70 backdrop-blur-xl border-b border-border/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex justify-between h-14 sm:h-16 items-center">
-          <Link to="/" className="flex items-center gap-2 sm:gap-3 group w-auto sm:w-[181.688px]">
-            <div className="p-1.5 sm:p-2 transition-colors">
-              <Droplets className="h-5 w-5 sm:h-6 sm:w-6 text-conference-blue dark:text-conference-accent" />
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2 sm:gap-3 group cursor-pointer">
+            <div className="p-0 transition-colors">
+              <img src="/img/logo_org/logo.jpg" alt="Logo" className="h-8 w-8 sm:h-10 sm:w-10 object-contain rounded-full" />
             </div>
-            <span className="font-serif text-lg sm:text-2xl font-semibold tracking-tight text-foreground">WICAR 2026</span>
+            <span className="font-serif text-lg sm:text-2xl font-semibold tracking-tight text-conference-blue-foreground">WICAR 2026</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-10">
+          <div className="hidden lg:flex items-center gap-8">
             {[
-              { key: 'nav.home', href: '/' },
               { key: 'nav.about', href: '#about' },
               { key: 'nav.directions', href: '#directions' },
-              { key: 'nav.dates', href: '#dates' }
+              { key: 'nav.dates', href: '#dates' },
+              { key: 'nav.requirements', href: '#requirements' }
             ].map((item, i) => (
               <a
                 key={i}
@@ -81,7 +81,7 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1 sm:gap-2">
             {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "text-muted-foreground h-9 w-9 sm:h-10 sm:w-10")}>
@@ -112,16 +112,13 @@ export default function Navbar() {
             </Button>
 
             {/* Desktop Auth Buttons */}
-            <div className="hidden sm:flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2">
               {token ? (
-                <div className="flex items-center gap-2">
-                  <Link
-                    to="/dashboard"
-                    className={cn(buttonVariants({ variant: "ghost" }), "text-xs uppercase tracking-widest font-bold text-foreground hover:bg-accent px-4")}
-                  >
-                    <User className="h-4 w-4 mr-2" />
-                    {user?.full_name?.split(' ')[0]}
-                  </Link>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-conference-blue-foreground">
+                    <User className="h-4 w-4" />
+                    <span className="text-xs font-bold">{user?.full_name?.split(' ')[0]}</span>
+                  </div>
                   <Button variant="ghost" size="icon" onClick={handleLogout} className="text-muted-foreground hover:text-destructive">
                     <LogOut className="h-4 w-4" />
                   </Button>
@@ -129,7 +126,7 @@ export default function Navbar() {
               ) : (
                 <Link
                   to="/login"
-                  className={cn(buttonVariants({ variant: "ghost" }), "text-xs uppercase tracking-widest font-bold text-foreground")}
+                  className={cn(buttonVariants({ variant: "ghost" }), "text-xs uppercase tracking-widest font-bold text-conference-blue-foreground")}
                 >
                   {t('nav.login')}
                 </Link>
@@ -137,7 +134,7 @@ export default function Navbar() {
 
               <Link
                 to={token ? "/dashboard" : "/register"}
-                className={cn(buttonVariants({ variant: "default" }), `bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground px-6 sm:px-8 rounded-full ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold transition-all shadow-lg shadow-conference-blue/10`)}
+                className={cn(buttonVariants({ variant: "default" }), `bg-conference-blue hover:bg-conference-accent text-white px-6 sm:px-8 rounded-full ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold transition-all shadow-lg shadow-conference-blue/10`)}
               >
                 {token ? t('navbar.cabinet') : t('nav.apply')}
               </Link>
@@ -161,10 +158,10 @@ export default function Navbar() {
         <div className="lg:hidden border-t border-border bg-background/95 backdrop-blur-xl">
           <div className="px-4 py-4 space-y-3">
             {[
-              { key: 'nav.home', href: '/' },
               { key: 'nav.about', href: '#about' },
               { key: 'nav.directions', href: '#directions' },
-              { key: 'nav.dates', href: '#dates' }
+              { key: 'nav.dates', href: '#dates' },
+              { key: 'nav.requirements', href: '#requirements' }
             ].map((item, i) => (
               <a
                 key={i}
@@ -179,21 +176,12 @@ export default function Navbar() {
               </a>
             ))}
 
-            <div className="pt-4 border-t border-border space-y-2">
+            <div className="pt-2 border-t border-border space-y-2">
               {token ? (
-                <>
-                  <Link
-                    to="/dashboard"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={cn(buttonVariants({ variant: "default" }), `w-full bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold`)}
-                  >
-                    <User className="h-4 w-4 mr-2" />
-                    {t('navbar.cabinet')}
-                  </Link>
-                  <Button
-                    variant="outline"
-                    className={`w-full ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold`}
-                    onClick={() => {
+                <Button
+                  variant="outline"
+                  className={`w-full ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold`}
+                  onClick={() => {
                       handleLogout();
                       setMobileMenuOpen(false);
                     }}
@@ -201,7 +189,6 @@ export default function Navbar() {
                     <LogOut className="h-4 w-4 mr-2" />
                     {t('navbar.logout')}
                   </Button>
-                </>
               ) : (
                 <>
                   <Link
@@ -214,7 +201,7 @@ export default function Navbar() {
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={cn(buttonVariants({ variant: "default" }), `w-full bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold`)}
+                    className={cn(buttonVariants({ variant: "default" }), `w-full bg-conference-blue hover:bg-conference-accent text-white ${language === 'uz' ? 'text-[9px]' : 'text-xs'} uppercase tracking-widest font-bold`)}
                   >
                     {t('nav.apply')}
                   </Link>

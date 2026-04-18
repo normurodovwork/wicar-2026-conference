@@ -41,3 +41,26 @@ class File(models.Model):
     
     def __str__(self):
         return f'{self.original_name} ({self.get_type_display()})'
+
+    def save(self, *args, **kwargs):
+        """Переопределяем save для отправки уведомлений о новых файлах."""
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        
+        # Если файл новый и это статья или антиплагиат, отправляем уведомление
+        if is_new and self.type in ['article', 'plagiarism']:
+            try:
+                from apps.participants.models import Participant
+                from apps.telegram_bot.bot import send_file_notification_sync
+                
+                # Находим participant по application
+                if self.application:
+                    try:
+                        participant = Participant.objects.get(application=self.application)
+                        send_file_notification_sync(participant.id, self.type)
+                    except Participant.DoesNotExist:
+                        pass
+            except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f'Ошибка отправки уведомления о файле #{self.id}: {e}', exc_info=True)

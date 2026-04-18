@@ -19,6 +19,24 @@ class ConferenceFileAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj and obj.file_type == 'gallery':
+            return ('uploaded_at', 'updated_at', 'file')
+        return ('uploaded_at', 'updated_at', 'file_size', 'gallery_url')
+
+    def get_fieldsets(self, request, obj=None):
+        if obj and obj.file_type == 'gallery':
+            return (
+                ('Галерея', {
+                    'fields': ('file_type', 'gallery_url')
+                }),
+            )
+        return (
+            ('Файл', {
+                'fields': ('file_type', 'file')
+            }),
+        )
     
     def file_size(self, obj):
         if obj.file:

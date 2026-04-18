@@ -70,6 +70,30 @@ export const api = {
     }
   },
 
+  async patch(endpoint: string, data: any, token?: string) {
+    console.log(`Patching: ${API_URL}${endpoint}`);
+    try {
+      const res = await fetch(`${API_URL}${endpoint}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        const errorMessage = errorData?.error || errorData?.detail || errorData?.message || JSON.stringify(errorData) || `Error ${res.status}`;
+        console.error(`API Error (${res.status}): ${errorMessage}`);
+        throw new Error(errorMessage);
+      }
+      return res.json();
+    } catch (err: any) {
+      console.error(`Patch failed for ${endpoint}:`, err);
+      throw err;
+    }
+  },
+
   async upload(endpoint: string, formData: FormData, token?: string) {
     const url = `${API_URL}${endpoint}`;
     console.log(`Uploading to: ${url}`, { hasToken: !!token });

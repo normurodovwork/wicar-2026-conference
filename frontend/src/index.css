@@ -93,14 +93,13 @@
 @layer utilities {
   @keyframes wave {
     0% { transform: translateX(0); }
-    50% { transform: translateX(-25%); }
-    100% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
   }
   .animate-wave {
-    animation: wave 15s linear infinite;
+    animation: wave 12s linear infinite;
   }
   .animate-wave-slow {
-    animation: wave 25s linear infinite;
+    animation: wave 20s linear infinite;
   }
 }
 

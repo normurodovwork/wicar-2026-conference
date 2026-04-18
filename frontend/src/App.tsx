@@ -16,7 +16,7 @@ import { Toaster } from '@/components/ui/sonner';
 export default function App() {
   return (
     // @ts-ignore - next-themes ThemeProvider types might mismatch in React 19
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <LanguageProvider>
         <Router>
           <div className="min-h-screen bg-background text-foreground font-sans antialiased">

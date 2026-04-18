@@ -3,9 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { api } from '@/src/lib/api';
+import { api } from '@/lib/api';
 import { toast } from 'sonner';
-import { useLanguage } from '@/src/components/LanguageProvider';
+import { useLanguage } from '@/components/LanguageProvider';
 import { UserPlus, Mail, Phone, Lock, ArrowRight } from 'lucide-react';
 
 export default function Register() {
@@ -19,8 +19,17 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const REGISTRATION_DEADLINE = new Date('2026-05-15T23:59:59');
+  const isRegistrationClosed = new Date() > REGISTRATION_DEADLINE;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isRegistrationClosed) {
+      toast.error(t('auth.registration_closed'));
+      return;
+    }
+
     setLoading(true);
     try {
       await api.post('/api/register', formData);
@@ -37,12 +46,12 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-16 pt-20">
       <div className="w-full max-w-[1000px] grid lg:grid-cols-2 border border-border shadow-2xl overflow-hidden">
         {/* Left Side - Info */}
-        <div className="hidden lg:flex flex-col justify-between p-12 bg-muted border-r border-border relative overflow-hidden">
+        <div className="hidden lg:flex flex-col justify-between p-12 bg-conference-blue text-white border-r border-border relative overflow-hidden">
           <div className="relative z-10">
             <div className="text-xs font-mono uppercase tracking-[0.3em] text-conference-accent mb-8">WICAR 2026 / Registration</div>
-            <h2 className="text-5xl font-serif leading-tight text-conference-blue-foreground dark:text-white mb-6">
+            <h2 className="text-5xl font-serif leading-tight text-white mb-6">
               {t('register.title').split(' ')[0]} <br />
-              <span className="italic">{t('register.title').split(' ').slice(1, 3).join(' ')}</span> <br />
+              <span className="text-conference-accent italic">{t('register.title').split(' ').slice(1, 3).join(' ')}</span> <br />
               {t('register.title').split(' ').slice(3).join(' ')}
             </h2>
             <div className="space-y-6 mt-12">
@@ -54,8 +63,8 @@ export default function Register() {
                 <div key={i} className="flex gap-4">
                   <div className="w-px h-12 bg-conference-accent opacity-30" />
                   <div>
-                    <h4 className="text-xs uppercase tracking-widest font-bold text-foreground mb-1">{item.title}</h4>
-                    <p className="text-xs text-muted-foreground font-light">{item.desc}</p>
+                    <h4 className="text-xs uppercase tracking-widest font-bold text-white mb-1">{item.title}</h4>
+                    <p className="text-xs text-white/60 font-light">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -63,7 +72,7 @@ export default function Register() {
           </div>
 
           <div className="relative z-10 pt-12">
-            <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+            <p className="text-[10px] font-mono uppercase tracking-widest text-white/60">
               {t('register.deadline')}
             </p>
           </div>
@@ -73,7 +82,7 @@ export default function Register() {
         <div className="p-8 lg:p-16 bg-card flex flex-col justify-center">
           <div className="max-w-sm mx-auto w-full space-y-8">
             <header>
-              <h1 className="text-2xl font-bold text-foreground uppercase tracking-widest mb-2">{t('auth.register')}</h1>
+              <h1 className="text-2xl font-bold text-conference-blue-foreground uppercase tracking-widest mb-2">{t('auth.register')}</h1>
               <div className="h-1 w-12 bg-conference-accent" />
             </header>
 
@@ -126,13 +135,13 @@ export default function Register() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground h-12 rounded-none text-xs uppercase tracking-widest font-bold transition-all group mt-6" disabled={loading}>
-                {loading ? t('auth.creating_account') : (
+              <Button type="submit" className="w-full bg-conference-blue hover:bg-conference-accent text-white h-12 rounded-none text-xs uppercase tracking-widest font-bold transition-all group mt-6" disabled={loading || isRegistrationClosed}>
+                {isRegistrationClosed ? t('auth.registration_closed') : (loading ? t('auth.creating_account') : (
                   <>
                     {t('auth.register')}
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="ml-2 h-4 w-4 text-white group-hover:translate-x-1 transition-transform" />
                   </>
-                )}
+                ))}
               </Button>
             </form>
 

@@ -1,0 +1,24 @@
+[Unit]
+# Shouldn't start automatically, triggers on creating the 'bind' socket (see below) instead
+Description=gunicorn WICAR application's daemon
+Requires=wicar-backend.socket
+After=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=10
+# Here :
+# config.wsgi:application => the "application" variable in "${WorkingDirectory}/config/wsgi.py"
+#
+User=node_mmi
+Group=node_mmi
+WorkingDirectory=/home/node_mmi/www/wicar/back
+ExecStart=/home/node_mmi/www/wicar/back/.venv/bin/gunicorn \
+    --access-logfile - \
+    --workers 3 \
+    --bind unix:/run/gunicorn-wicar.sock \
+    config.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

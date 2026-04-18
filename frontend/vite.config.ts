@@ -12,7 +12,7 @@ export default defineConfig(({mode}) => {
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(__dirname, './src'),
       },
     },
     server: {
@@ -21,15 +21,33 @@ export default defineConfig(({mode}) => {
       hmr: process.env.DISABLE_HMR !== 'true',
       proxy: {
         '/api': {
-          target: 'http://localhost:8000',
+          target: 'http://localhost:8001',
           changeOrigin: true,
         },
         '/media': {
-          target: 'http://localhost:8000',
+          target: 'http://localhost:8001',
           changeOrigin: true,
         },
         '/admin': {
-          target: 'http://localhost:8000',
+          target: 'http://localhost:8001',
+          changeOrigin: true,
+        },
+      },
+    },
+    preview: {
+      port: 3160,
+      host: '0.0.0.0',
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8001',
+          changeOrigin: true,
+        },
+        '/media': {
+          target: 'http://localhost:8001',
+          changeOrigin: true,
+        },
+        '/admin': {
+          target: 'http://localhost:8001',
           changeOrigin: true,
         },
       },

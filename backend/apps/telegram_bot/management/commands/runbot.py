@@ -1,12 +1,6 @@
 import os
 import logging
-from pathlib import Path
-from dotenv import load_dotenv
 from django.core.management.base import BaseCommand
-
-# Загружаем .env
-env_path = Path(__file__).resolve().parent.parent.parent.parent.parent.parent / '.env'
-load_dotenv(env_path)
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -22,10 +16,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write('Запуск Telegram бота...')
+        self.stdout.write(f'TELEGRAM_BOT_TOKEN установлен: {"Да" if os.environ.get("TELEGRAM_BOT_TOKEN") else "Нет"}')
 
         app = setup_bot()
         if not app:
-            self.stdout.write(self.style.ERROR('TELEGRAM_BOT_TOKEN не установлен'))
+            self.stdout.write(self.style.ERROR('TELEGRAM_BOT_TOKEN не установлен. Добавьте токен в .env файл или переменные окружения.'))
             return
 
         self.stdout.write(self.style.SUCCESS('Бот успешно запущен!'))

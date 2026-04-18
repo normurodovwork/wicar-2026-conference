@@ -2,15 +2,15 @@ import { motion, useScroll, useTransform } from 'motion/react';
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { api } from '@/src/lib/api';
-import { useLanguage } from '@/src/components/LanguageProvider';
+import { api } from '@/lib/api';
+import { useLanguage } from '@/components/LanguageProvider';
 import { cn } from '@/lib/utils';
 import { 
-  FileText, Calendar, MapPin, Users, ArrowRight, Download, Droplets, 
-  Globe, Shield, Zap, Mail, Phone, MapPinned, Languages, Type, 
+  FileText, Calendar, MapPin, Users, ArrowRight, Download,
+  Globe, Shield, Zap, Mail, Phone, MapPinned, Languages, Type, Image,
   FileStack, CreditCard, ChevronDown, ChevronUp, ExternalLink, CheckCircle2 
 } from 'lucide-react';
-import { SeoHead } from '@/src/components/SeoHead';
+import { SeoHead } from '@/components/SeoHead';
 
 const Countdown = ({ deadline }: { deadline: string }) => {
   const [timeLeft, setTimeLeft] = useState<{ days: number, hours: number, minutes: number, seconds: number } | null>(null);
@@ -69,14 +69,14 @@ const AccordionItem = ({ title, children, isOpen, onClick }: { title: string, ch
       onClick={onClick}
       className="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-accent/50 transition-colors"
     >
-      <span className="text-sm font-bold uppercase tracking-widest text-foreground">{title}</span>
+      <span className="text-sm font-bold uppercase tracking-widest text-conference-blue-foreground">{title}</span>
       {isOpen ? <ChevronUp className="h-5 w-5 text-conference-accent" /> : <ChevronDown className="h-5 w-5 text-conference-accent" />}
     </button>
     <div className={cn(
       "px-8 transition-all duration-500 ease-in-out",
       isOpen ? "max-h-[1000px] py-6 opacity-100" : "max-h-0 py-0 opacity-0"
     )}>
-      <div className="text-foreground/80 font-light leading-relaxed text-sm">
+      <div className="text-conference-blue-foreground/80 font-light leading-relaxed text-sm">
         {children}
       </div>
     </div>
@@ -141,11 +141,10 @@ export default function Home() {
           <img 
             src="https://images.wallpapersden.com/image/download/serene-desert-4k-dunes-beach-landscape_bmdqaG2UmZqaraWkpJRobWllrWdqaWg.jpg" 
             alt="Water background" 
-            className="w-full h-full object-cover opacity-40 dark:opacity-20 scale-110"
+            className="w-full h-full object-cover opacity-70 dark:opacity-50 scale-110"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/20 to-background" />
-          <div className="absolute inset-0 bg-black/5 dark:bg-black/20" />
+          <div className="absolute inset-0 bg-white/60 dark:bg-background/70" />
         </motion.div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-30">
@@ -156,7 +155,7 @@ export default function Home() {
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-5xl mx-auto"
           >
-            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-serif font-light leading-tight text-foreground mb-4 sm:mb-6">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-light leading-tight text-conference-blue-foreground mb-2 sm:mb-4">
               {t('hero.title')}
             </h1>
 
@@ -171,7 +170,7 @@ export default function Home() {
               </div>
             </div>
 
-            <p className="text-sm sm:text-lg text-muted-foreground mb-3 sm:mb-4 max-w-2xl mx-auto leading-relaxed font-light italic">
+            <p className="text-base sm:text-xl text-muted-foreground mb-3 sm:mb-4 max-w-2xl mx-auto leading-relaxed font-light">
               {t('hero.subtitle')}
             </p>
 
@@ -188,9 +187,9 @@ export default function Home() {
                     e.preventDefault();
                     navigate('/register');
                   }}
-                  className={cn(buttonVariants({ size: "lg" }), "bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground px-6 sm:px-10 h-11 sm:h-14 rounded-none text-[10px] sm:text-xs uppercase tracking-widest font-bold transition-all shadow-2xl shadow-conference-blue/20 w-full sm:w-auto")}
+                  className={cn(buttonVariants({ size: "lg" }), "bg-conference-blue hover:bg-conference-accent text-white px-6 sm:px-10 h-11 sm:h-14 rounded-none text-[10px] sm:text-xs uppercase tracking-widest font-bold transition-all shadow-2xl shadow-conference-blue/20 w-full sm:w-auto")}
                 >
-                  {t('nav.apply')} <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  {t('nav.apply')} <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
                 </a>
 
                 {conferenceFiles['program'] && (
@@ -203,6 +202,20 @@ export default function Home() {
                     )}
                   >
                     <Download className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('hero.download.program')}
+                  </a>
+                )}
+
+                {conferenceFiles['gallery']?.gallery_url && (
+                  <a
+                    href={conferenceFiles['gallery'].gallery_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "lg" }),
+                      "border-conference-accent text-conference-accent hover:bg-conference-accent hover:text-conference-blue-foreground px-6 sm:px-10 h-11 sm:h-14 rounded-none text-[10px] sm:text-xs uppercase tracking-widest font-bold transition-all w-full sm:w-auto"
+                    )}
+                  >
+                    <Image className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('hero.download.gallery')}
                   </a>
                 )}
               </div>
@@ -241,7 +254,7 @@ export default function Home() {
                       "border-conference-blue text-conference-blue-foreground dark:border-conference-accent dark:text-conference-accent hover:bg-conference-blue hover:text-conference-blue-foreground dark:hover:bg-conference-accent px-3 sm:px-5 h-8 sm:h-10 rounded-none text-[8px] sm:text-[9px] uppercase tracking-widest font-bold transition-all"
                     )}
                   >
-                    <FileText className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.collection')}
+                    <FileText className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.collection_btn')}
                   </a>
                 )}
               </div>
@@ -250,12 +263,12 @@ export default function Home() {
         </div>
 
         {/* Animated Waves */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-10 pointer-events-none">
-          <svg className="relative block w-[200%] h-16 md:h-24 animate-wave" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5,73.84-4.36,147.54,16.88,218.2,35.26,69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" className="fill-conference-blue opacity-60"></path>
+        <div className="absolute -bottom-1 left-0 w-full overflow-hidden leading-[0] z-10 pointer-events-none">
+          <svg className="relative block w-[200%] h-16 md:h-24 animate-wave" viewBox="0 0 2400 120" preserveAspectRatio="none">
+            <path d="M0,60 C200,20 400,100 600,60 C800,20 1000,100 1200,60 C1400,20 1600,100 1800,60 C2000,20 2200,100 2400,60 L2400,120 L0,120 Z" className="fill-conference-blue opacity-40"></path>
           </svg>
-          <svg className="absolute bottom-0 left-0 block w-[200%] h-12 md:h-20 animate-wave-slow" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5,73.84-4.36,147.54,16.88,218.2,35.26,69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" className="fill-conference-blue opacity-80"></path>
+          <svg className="absolute bottom-0 left-0 block w-[200%] h-12 md:h-20 animate-wave-slow" viewBox="0 0 2400 120" preserveAspectRatio="none">
+            <path d="M0,70 C150,40 350,100 600,70 C850,40 1050,100 1200,70 C1350,40 1550,100 1800,70 C2050,40 2250,100 2400,70 L2400,120 L0,120 Z" className="fill-conference-blue opacity-60"></path>
           </svg>
         </div>
       </section>
@@ -268,7 +281,7 @@ export default function Home() {
               <Zap className="h-6 w-6 text-conference-accent" />
             </div>
             <h2 className="text-xs uppercase tracking-[0.3em] font-bold text-conference-accent mb-4">{t('about.goal.title')}</h2>
-            <p className="text-2xl md:text-3xl font-serif text-foreground leading-snug italic mb-12">
+            <p className="text-2xl md:text-3xl font-serif text-conference-blue-foreground leading-snug italic mb-12">
               "{t('about.goal.desc')}"
             </p>
             
@@ -301,8 +314,8 @@ export default function Home() {
             </div>
             <div className="text-center md:text-left">
               <h2 className="text-xs uppercase tracking-[0.3em] font-bold text-conference-accent mb-4">{t('organizer.title')}</h2>
-              <h3 className="text-3xl font-serif text-foreground mb-6">{t('organizer.name')}</h3>
-              <p className="text-foreground/80 font-light leading-relaxed">
+              <h3 className="text-3xl font-serif text-conference-blue-foreground mb-6">{t('organizer.name')}</h3>
+              <p className="text-conference-blue-foreground/80 font-light leading-relaxed">
                 {t('organizer.desc')}
               </p>
             </div>
@@ -329,11 +342,19 @@ export default function Home() {
                 const vices = committee.members.filter((m: any) => m.role === 'vice');
                 const members = committee.members.filter((m: any) => m.role === 'member');
 
+                // Перевод названия комитета
+                const committeeType = committee.type;
+                const committeeName = committeeType === 'organizing'
+                  ? t('committee.org')
+                  : committeeType === 'program'
+                  ? t('committee.prog')
+                  : committee.name;
+
                 return (
                   <div key={committee.id} className="space-y-12">
                     <div className="flex items-center gap-4 mb-8">
                       <div className="h-[1px] w-12 bg-conference-accent" />
-                      <h3 className="text-xl uppercase tracking-widest font-bold text-foreground">{committee.name}</h3>
+                      <h3 className="text-xl uppercase tracking-widest font-bold text-conference-blue-foreground">{committeeName}</h3>
                     </div>
 
                     <div className="space-y-8">
@@ -352,7 +373,7 @@ export default function Home() {
                           )}
                           <div>
                             <p className="text-[10px] uppercase tracking-widest font-bold text-conference-accent mb-2">{t('committee.chairman')}</p>
-                            <h4 className="text-2xl font-serif text-foreground">{chairman.full_name}</h4>
+                            <h4 className="text-2xl font-serif text-conference-blue-foreground">{chairman.full_name}</h4>
                             <p className="text-sm text-muted-foreground mt-2">{chairman.position}</p>
                           </div>
                         </div>
@@ -364,7 +385,7 @@ export default function Home() {
                           {vices.map((member: any) => (
                             <div key={member.id} className="p-6 border border-border bg-background">
                               <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-2">{t('committee.vice')}</p>
-                              <h4 className="text-lg font-bold text-foreground">{member.full_name}</h4>
+                              <h4 className="text-lg font-bold text-conference-blue-foreground">{member.full_name}</h4>
                               <p className="text-xs text-muted-foreground mt-1">{member.position}</p>
                             </div>
                           ))}
@@ -378,7 +399,7 @@ export default function Home() {
                           <div className="grid sm:grid-cols-2 gap-x-12 gap-y-4">
                             {members.map((member: any) => (
                               <div key={member.id} className="flex flex-col py-2 border-b border-border/50 last:border-0">
-                                <span className="text-sm font-medium text-foreground">{member.full_name}</span>
+                                <span className="text-sm font-medium text-conference-blue-foreground">{member.full_name}</span>
                                 <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{member.position}</span>
                               </div>
                             ))}
@@ -400,15 +421,17 @@ export default function Home() {
           <div className="max-w-xl mb-20">
             <h2 className="text-4xl md:text-5xl font-serif text-conference-accent mb-6">
               {t('directions.title').split(' ')[0]} <br />
-              <span className="italic text-foreground">{t('directions.title').split(' ').slice(1).join(' ')}</span>
+              <span className="italic text-conference-blue-foreground">{t('directions.title').split(' ').slice(1).join(' ')}</span>
             </h2>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((num) => (
               <div key={num} className="bg-card p-10 border border-border hover:border-conference-accent transition-all duration-500 group">
-                <div className="text-4xl font-serif text-conference-accent/40 group-hover:text-conference-accent/60 transition-colors mb-6">0{num}</div>
-                <h3 className="text-xl font-serif font-bold text-foreground mb-6 leading-tight">
+                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-conference-accent/60 group-hover:text-conference-accent transition-colors mb-6">
+                  {t('directions.label')} {num}
+                </div>
+                <h3 className="text-xl font-serif font-bold text-conference-blue-foreground mb-6 leading-tight">
                   {t(`directions.${num}.title`)}
                 </h3>
                 <ul className="space-y-4">
@@ -425,26 +448,61 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Timeline Section */}
-      <section id="dates" className="py-32 bg-conference-blue-deep text-conference-blue-foreground">
-        <div className="container mx-auto px-6 lg:px-12">
-          <h2 className="text-4xl md:text-5xl font-serif mb-20 text-center italic text-conference-accent">{t('dates.title')}</h2>
-          
-          <div className="grid md:grid-cols-4 gap-12">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="relative pt-12 border-t border-conference-blue-foreground/10">
-                <span className="absolute top-0 left-0 -translate-y-1/2 bg-conference-accent px-3 py-1 text-[10px] font-bold tracking-widest uppercase text-conference-blue-foreground">
-                  {t(`dates.item${i}.date`)}
-                </span>
-                <h3 className="text-xl font-bold mb-4">{t(`dates.item${i}.title`)}</h3>
+      {/* Important Dates Section */}
+      <section id="dates" className="py-20 bg-conference-blue-deep text-white relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-conference-accent/0 via-conference-accent to-conference-accent/0"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-conference-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-conference-accent/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+        <div className="container mx-auto px-6 lg:px-12 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-serif italic text-white">{t('dates.title')}</h2>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="group relative"
+              >
+                {/* Card */}
+                <div className="relative p-6 bg-background border border-conference-accent/20 rounded-xl shadow-md hover:shadow-xl hover:border-conference-accent/50 transition-all duration-300 h-full overflow-hidden">
+                  {/* Gradient overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-conference-accent/0 to-transparent group-hover:from-conference-accent/5 transition-all duration-300 rounded-xl"></div>
+
+                  <div className="relative z-10">
+                    {/* Step number */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-conference-accent/10 flex items-center justify-center group-hover:bg-conference-accent/20 transition-all duration-300">
+                        <span className="text-lg font-bold text-conference-accent">
+                          {i}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Date */}
+                    <div className="mb-3">
+                      <span className="inline-block px-3 py-1 bg-conference-accent text-conference-blue-foreground text-[9px] font-bold tracking-widest uppercase rounded-md">
+                        {t(`dates.item${i}.date`)}
+                      </span>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-sm font-bold text-conference-blue-foreground group-hover:text-conference-accent transition-colors duration-300 leading-snug">
+                      {t(`dates.item${i}.title`)}
+                    </h3>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
       {/* Participation & Publication Section */}
-      <section className="py-32 bg-background">
+      <section id="requirements" className="py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-20 max-w-6xl mx-auto">
             {/* Publication Requirements */}
@@ -492,7 +550,7 @@ export default function Home() {
                     {[t('publication.req.file_paper'), t('publication.req.file_plagiarism'), t('publication.req.file_info')].map((file, i) => (
                       <div key={i} className="flex items-center gap-3 p-3 bg-background border border-border">
                         <FileStack className="h-4 w-4 text-conference-accent" />
-                        <span className="text-xs font-bold uppercase tracking-widest text-foreground">{file}</span>
+                        <span className="text-xs font-bold uppercase tracking-widest text-conference-blue-foreground">{file}</span>
                       </div>
                     ))}
                   </div>
@@ -518,7 +576,7 @@ export default function Home() {
                       "p-6 border transition-all duration-300",
                       item.highlight ? "border-conference-accent bg-conference-accent/5" : "border-border bg-background"
                     )}>
-                      <p className="text-sm font-medium text-foreground">{item.label}</p>
+                      <p className="text-sm font-medium text-conference-blue-foreground">{item.label}</p>
                     </div>
                   ))}
                 </div>
@@ -539,8 +597,8 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-20">
               <div className="space-y-12">
                 <div>
-                  <h2 className="text-4xl md:text-5xl font-serif text-conference-blue-foreground dark:text-white mb-6">{t('contact.title')}</h2>
-                  <p className="text-muted-foreground font-light leading-relaxed max-w-md">
+                  <h2 className="text-4xl md:text-5xl font-serif text-conference-blue-foreground mb-6">{t('contact.title')}</h2>
+                  <p className="text-conference-blue-foreground font-light leading-relaxed max-w-md">
                     {t('contact.address')}
                   </p>
                 </div>
@@ -549,15 +607,15 @@ export default function Home() {
                   <div className="flex items-center gap-4 p-6 border border-border bg-card">
                     <Mail className="h-6 w-6 text-conference-accent" />
                     <div>
-                      <h4 className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-1">{t('contact.email_label')}</h4>
-                      <p className="text-sm font-bold text-conference-blue-foreground dark:text-white">{t('contact.email')}</p>
+                      <h4 className="text-[10px] uppercase tracking-widest font-bold text-conference-blue-foreground mb-1">{t('contact.email_label')}</h4>
+                      <p className="text-sm font-bold text-conference-blue-foreground">{t('contact.email')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 p-6 border border-border bg-card">
                     <Phone className="h-6 w-6 text-conference-accent" />
                     <div>
-                      <h4 className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-1">{t('contact.phone_label')}</h4>
-                      <p className="text-sm font-bold text-conference-blue-foreground dark:text-white">{t('contact.phone')}</p>
+                      <h4 className="text-[10px] uppercase tracking-widest font-bold text-conference-blue-foreground mb-1">{t('contact.phone_label')}</h4>
+                      <p className="text-sm font-bold text-conference-blue-foreground">{t('contact.phone')}</p>
                     </div>
                   </div>
                   <a
@@ -568,10 +626,10 @@ export default function Home() {
                   >
                     <MapPinned className="h-6 w-6 text-conference-accent" />
                     <div className="flex-1">
-                      <h4 className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-1">{t('contact.location_label')}</h4>
-                      <p className="text-sm font-bold text-conference-blue-foreground dark:text-white">{t('hero.location')}</p>
+                      <h4 className="text-[10px] uppercase tracking-widest font-bold text-conference-blue-foreground mb-1">{t('contact.location_label')}</h4>
+                      <p className="text-sm font-bold text-conference-blue-foreground">{t('hero.location')}</p>
                     </div>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-conference-accent transition-colors" />
+                    <ExternalLink className="h-4 w-4 text-conference-blue-foreground group-hover:text-conference-accent transition-colors" />
                   </a>
                 </div>
               </div>
@@ -579,14 +637,14 @@ export default function Home() {
               <div className="bg-card p-10 border border-border shadow-2xl shadow-conference-blue/5">
                 <form className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t('contact.name')}</label>
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-conference-blue-foreground">{t('contact.name')}</label>
                     <input type="text" className="w-full bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-conference-accent transition-colors" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t('contact.message')}</label>
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-conference-blue-foreground">{t('contact.message')}</label>
                     <textarea rows={6} className="w-full bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-conference-accent transition-colors resize-none"></textarea>
                   </div>
-                  <Button className="w-full bg-conference-blue hover:bg-conference-accent text-conference-blue-foreground h-14 rounded-none uppercase tracking-widest font-bold text-xs transition-all">
+                  <Button className="w-full bg-conference-blue hover:bg-conference-accent text-white h-14 rounded-none uppercase tracking-widest font-bold text-xs transition-all">
                     {t('contact.send')}
                   </Button>
                 </form>
@@ -602,20 +660,20 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-2 space-y-6">
               <div className="flex items-center gap-3">
-                <Droplets className="h-6 w-6 text-conference-accent" />
-                <span className="font-serif text-2xl font-semibold text-foreground">WICAR 2026</span>
+                <img src="/img/logo_org/logo.jpg" alt="Logo" className="h-8 w-8 object-contain rounded-full" />
+                <span className="font-serif text-2xl font-semibold text-conference-blue-foreground">WICAR 2026</span>
               </div>
-              <p className="text-muted-foreground text-sm max-w-sm font-light leading-relaxed">
+              <p className="text-conference-blue-foreground text-sm max-w-sm font-light leading-relaxed">
                 {t('hero.subtitle')}
               </p>
             </div>
             
             <div className="space-y-6">
-              <h4 className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t('footer.navigation')}</h4>
+              <h4 className="text-[10px] uppercase tracking-widest font-bold text-conference-blue-foreground">{t('footer.navigation')}</h4>
               <ul className="space-y-3">
                 {['home', 'about', 'directions', 'dates'].map((key) => (
                   <li key={key}>
-                    <a href={`#${key}`} className="text-xs uppercase tracking-widest font-bold text-muted-foreground hover:text-conference-accent transition-colors">
+                    <a href={`#${key}`} className="text-xs uppercase tracking-widest font-bold text-conference-blue-foreground hover:text-conference-accent transition-colors">
                       {t(`nav.${key}`)}
                     </a>
                   </li>
@@ -624,14 +682,14 @@ export default function Home() {
             </div>
 
             <div className="space-y-6">
-              <h4 className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t('footer.organizer')}</h4>
-              <p className="text-xs font-bold text-conference-blue-foreground dark:text-white uppercase tracking-widest leading-relaxed">
+              <h4 className="text-[10px] uppercase tracking-widest font-bold text-conference-blue-foreground">{t('footer.organizer')}</h4>
+              <p className="text-xs font-bold text-conference-blue-foreground uppercase tracking-widest leading-relaxed">
                 {t('organizer.name')}
               </p>
             </div>
           </div>
           
-          <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-widest font-bold text-muted-foreground">
+          <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-widest font-bold text-conference-blue-foreground">
             <span>© 2026 WICAR Conference | {t('footer.rights')}</span>
             <div className="flex gap-8 items-center">
               <a href="https://uwed.uz" target="_blank" rel="noopener noreferrer" className="hover:text-conference-accent transition-colors">UWED.UZ</a>
