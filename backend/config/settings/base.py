@@ -123,6 +123,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Media files (Uploaded files)
 MEDIA_URL = '/media/'
@@ -141,6 +142,9 @@ JAZZMIN_SETTINGS = {
     "site_title": "WICAR 2026 Admin",
     "site_header": "WICAR 2026",
     "site_brand": "WICAR 2026",
+    "site_logo": "img/logo_new.png",
+    "site_logo_classes": "img-circle",
+    "site_icon": "img/logo_new.png",
     "welcome_sign": "Добро пожаловать в панель администратора WICAR 2026",
     "show_ui_builder": False,
     "topmenu_links": [
