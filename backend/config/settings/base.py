@@ -153,6 +153,31 @@ JAZZMIN_SETTINGS = {
         {"name": "Заявки", "model": "applications.Application"},
         {"name": "Файлы", "model": "files.File"},
     ],
+    # Иконки для каждой модели (Font Awesome 5)
+    "icons": {
+        # Auth / Users
+        "auth":                          "fas fa-shield-alt",
+        "auth.user":                     "fas fa-user",
+        "auth.group":                    "fas fa-users",
+        "users.user":                    "fas fa-user-circle",
+        # Заявки
+        "applications.application":      "fas fa-file-alt",
+        # Файлы
+        "files.file":                    "fas fa-paperclip",
+        # Комитеты
+        "committees.committee":          "fas fa-sitemap",
+        "committees.committeemember":    "fas fa-user-tie",
+        # Участники
+        "participants.participant":      "fas fa-id-badge",
+        # Оплата
+        "payment.paymentinfo":           "fas fa-credit-card",
+        # Файлы конференции
+        "conference_files.conferencefile": "fas fa-book-open",
+        # Telegram бот
+        "telegram_bot.telegramadmin":    "fab fa-telegram-plane",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
 }
 
 # Telegram Bot
