@@ -192,7 +192,7 @@ export default function Home() {
                   {t('nav.apply')} <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
                 </a>
 
-                {conferenceFiles['program'] && (
+                {conferenceFiles['program']?.file_url && (
                   <a
                     href={conferenceFiles['program'].file_url}
                     download={conferenceFiles['program'].file_name || "conference_program.pdf"}
@@ -221,7 +221,7 @@ export default function Home() {
               </div>
 
               <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-                {conferenceFiles['info_letter_1'] && (
+                {conferenceFiles['info_letter_1']?.file_url && (
                   <a
                     href={conferenceFiles['info_letter_1'].file_url}
                     download={conferenceFiles['info_letter_1'].file_name || "info_letter_1.pdf"}
@@ -233,7 +233,7 @@ export default function Home() {
                     <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.info1')}
                   </a>
                 )}
-                {conferenceFiles['info_letter_2'] && (
+                {conferenceFiles['info_letter_2']?.file_url && (
                   <a
                     href={conferenceFiles['info_letter_2'].file_url}
                     download={conferenceFiles['info_letter_2'].file_name || "info_letter_2.pdf"}
@@ -245,7 +245,7 @@ export default function Home() {
                     <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.info2')}
                   </a>
                 )}
-                {conferenceFiles['collection'] && (
+                {conferenceFiles['collection']?.file_url && (
                   <a
                     href={conferenceFiles['collection'].file_url}
                     download={conferenceFiles['collection'].file_name || "proceedings.pdf"}
