@@ -5,10 +5,12 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { api } from '@/lib/api';
 import { useLanguage } from '@/components/LanguageProvider';
 import { cn } from '@/lib/utils';
-import { 
+import {
   FileText, Calendar, MapPin, Users, ArrowRight, Download,
   Globe, Shield, Zap, Mail, Phone, MapPinned, Languages, Type, Image,
-  FileStack, CreditCard, ChevronDown, ChevronUp, ExternalLink, CheckCircle2 
+  FileStack, CreditCard, ChevronDown, ChevronUp, ExternalLink, CheckCircle2,
+  Building2, BookOpen, CalendarDays, MessageSquare, ClipboardList,
+  Waves, BarChart2, Leaf, Send, UserCheck, LayoutList, Star, BookMarked
 } from 'lucide-react';
 import { SeoHead } from '@/components/SeoHead';
 
@@ -318,7 +320,12 @@ export default function Home() {
               />
             </div>
             <div className="text-center md:text-left">
-              <h2 className="text-xs uppercase tracking-[0.3em] font-bold text-conference-accent mb-4">{t('organizer.title')}</h2>
+              <div className="inline-flex items-center gap-2 mb-4">
+                <div className="inline-flex items-center justify-center p-2 bg-conference-accent/10 rounded-full">
+                  <Building2 className="h-4 w-4 text-conference-accent" />
+                </div>
+                <h2 className="text-xs uppercase tracking-[0.3em] font-bold text-conference-accent">{t('organizer.title')}</h2>
+              </div>
               <h3 className="text-3xl font-serif text-conference-blue-foreground mb-6">{t('organizer.name')}</h3>
               <p className="text-conference-blue-foreground/80 font-light leading-relaxed">
                 {t('organizer.desc')}
@@ -331,7 +338,12 @@ export default function Home() {
       {/* Committees Section */}
       <section className="py-32">
         <div className="container mx-auto px-6 lg:px-12">
-          <h2 className="text-4xl md:text-5xl font-serif text-center text-conference-accent mb-24 italic">{t('committee.title')}</h2>
+          <div className="flex flex-col items-center mb-24">
+            <div className="inline-flex items-center justify-center p-3 bg-conference-accent/10 rounded-full mb-6">
+              <Users className="h-6 w-6 text-conference-accent" />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-serif text-center text-conference-accent italic">{t('committee.title')}</h2>
+          </div>
 
           {loadingCommittees ? (
             <div className="flex justify-center items-center min-h-[400px]">
@@ -424,6 +436,11 @@ export default function Home() {
       <section id="directions" className="py-32 bg-muted/30 border-y border-border">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="max-w-xl mb-20">
+            <div className="inline-flex items-center gap-2 mb-6">
+              <div className="inline-flex items-center justify-center p-2 bg-conference-accent/10 rounded-full">
+                <BookOpen className="h-5 w-5 text-conference-accent" />
+              </div>
+            </div>
             <h2 className="text-4xl md:text-5xl font-serif text-conference-accent mb-6">
               {t('directions.title').split(' ')[0]} <br />
               <span className="italic text-conference-blue-foreground">{t('directions.title').split(' ').slice(1).join(' ')}</span>
@@ -431,10 +448,19 @@ export default function Home() {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((num) => (
+            {[
+              { num: 1, Icon: Waves },
+              { num: 2, Icon: BarChart2 },
+              { num: 3, Icon: Leaf },
+            ].map(({ num, Icon }) => (
               <div key={num} className="bg-card p-10 border border-border hover:border-conference-accent transition-all duration-500 group">
-                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-conference-accent/60 group-hover:text-conference-accent transition-colors mb-6">
-                  {t('directions.label')} {num}
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="inline-flex items-center justify-center p-2 bg-conference-accent/10 rounded-lg group-hover:bg-conference-accent/20 transition-colors">
+                    <Icon className="h-5 w-5 text-conference-accent" />
+                  </div>
+                  <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-conference-accent/60 group-hover:text-conference-accent transition-colors">
+                    {t('directions.label')} {num}
+                  </div>
                 </div>
                 <h3 className="text-xl font-serif font-bold text-conference-blue-foreground mb-6 leading-tight">
                   {t(`directions.${num}.title`)}
@@ -462,11 +488,20 @@ export default function Home() {
 
         <div className="container mx-auto px-6 lg:px-12 relative z-10">
           <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-full mb-6">
+              <CalendarDays className="h-6 w-6 text-conference-accent" />
+            </div>
             <h2 className="text-3xl md:text-4xl font-serif italic text-white">{t('dates.title')}</h2>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {[1, 2, 3, 4, 5].map((i) => (
+            {[
+              { i: 1, Icon: Send },
+              { i: 2, Icon: UserCheck },
+              { i: 3, Icon: LayoutList },
+              { i: 4, Icon: Star },
+              { i: 5, Icon: BookMarked },
+            ].map(({ i, Icon }) => (
               <div
                 key={i}
                 className="group relative"
@@ -477,12 +512,10 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-br from-conference-accent/0 to-transparent group-hover:from-conference-accent/5 transition-all duration-300 rounded-xl"></div>
 
                   <div className="relative z-10">
-                    {/* Step number */}
+                    {/* Icon */}
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-conference-accent/10 flex items-center justify-center group-hover:bg-conference-accent/20 transition-all duration-300">
-                        <span className="text-lg font-bold text-conference-accent">
-                          {i}
-                        </span>
+                        <Icon className="h-5 w-5 text-conference-accent" />
                       </div>
                     </div>
 
@@ -513,6 +546,11 @@ export default function Home() {
             {/* Publication Requirements */}
             <div className="space-y-12">
               <div>
+                <div className="inline-flex items-center gap-2 mb-6">
+                  <div className="inline-flex items-center justify-center p-2 bg-conference-accent/10 rounded-full">
+                    <ClipboardList className="h-5 w-5 text-conference-accent" />
+                  </div>
+                </div>
                 <h2 className="text-4xl font-serif text-conference-accent mb-6">{t('publication.title')}</h2>
                 <p className="text-muted-foreground font-light leading-relaxed">
                   {t('publication.general')}
@@ -602,6 +640,11 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-20">
               <div className="space-y-12">
                 <div>
+                  <div className="inline-flex items-center gap-2 mb-6">
+                    <div className="inline-flex items-center justify-center p-2 bg-conference-accent/10 rounded-full">
+                      <MessageSquare className="h-5 w-5 text-conference-accent" />
+                    </div>
+                  </div>
                   <h2 className="text-4xl md:text-5xl font-serif text-conference-blue-foreground mb-6">{t('contact.title')}</h2>
                   <p className="text-conference-blue-foreground font-light leading-relaxed max-w-md">
                     {t('contact.address')}
