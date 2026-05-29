@@ -2,6 +2,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Tailwind v4 по умолчанию триггерит dark: по prefers-color-scheme.
+   next-themes переключает класс .dark — связываем dark: с этим классом. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;

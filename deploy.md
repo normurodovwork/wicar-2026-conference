@@ -9,8 +9,12 @@
 | **Username** | `node_mmi` |
 | **Node Port** | `3160` |
 | **WICAR Root** | `/home/node_mmi/www/wicar/front` |
+| **Deploy Method**| **Offline ZIP** (Server has no internet) |
+| **Permissions** | **User-level** (No sudo rights) |
 
-> ⚠️ **Пароль от SSH хранится в секретном менеджере. Не коммитьте его в репозиторий!**
+> [!IMPORTANT]
+> **No Sudo Access**: You cannot reload Nginx or modify system-wide configs. All updates must be made within the `node_mmi` home directory.
+> **No Internet Access**: `git pull` and `npm install` will **NOT** work on the server. Use the Offline Deployment method below.
 
 ## 🏗 Архитектура деплоя
 
@@ -36,45 +40,64 @@
 
 ---
 
-## 🚀 Фронтенд (React + Vite)
+### 📦 Способ 1: Оффлайн деплой (ZIP — РЕКОМЕНДУЕТСЯ)
 
-### Шаг 1: Подключение к серверу
+Поскольку на сервере нет интернета, используйте этот метод для обновления фронтенда.
 
-```bash
-ssh node_mmi@192.168.23.43
+**1. На локальном компьютере:**
+```powershell
+# Собрать фронтенд
+cd frontend
+npm run build
+
+# Перейти в папку сборки и создать архив
+cd dist
+Compress-Archive -Path * -DestinationPath ../../wicar-front-updated.zip -Force
 ```
 
-### Шаг 2: Клонирование/обновление кода
+**2. Загрузить архив на сервер:**
+```bash
+scp wicar-front-updated.zip node_mmi@192.168.23.43:/home/node_mmi/www/wicar/front/
+```
 
+**3. На сервере (автоматическое обновление):**
 ```bash
 cd /home/node_mmi/www/wicar/front
-git pull origin main
+# Удалить старую сборку (будьте осторожны)
+rm -rf dist/*
+# Распаковать новую сборку прямо в папку dist
+unzip -o wicar-front-updated.zip -d dist/
+# Перезапустить процесс в PM2
+pm2 restart wicar-frontend
 ```
 
-### Шаг 3: Установка зависимостей
+---
 
+### 🛠 Устранение неполадок (Troubleshooting)
+
+**1. Если PM2 не видит процесс:**
 ```bash
-npm install
-```
-
-### Шаг 4: Сборка
-
-```bash
-npm run build
-```
-
-### Шаг 5: Запуск через PM2 (или systemd)
-
-```bash
-# Если используется PM2
+pm2 list
+# Если пусто или нет 'wicar-frontend', запустите заново:
+cd /home/node_mmi/www/wicar/front
 pm2 start "npx vite preview --host 0.0.0.0 --port 3160" --name wicar-frontend
-pm2 save
-
-# Или вручную
-npx vite preview --host 0.0.0.0 --port 3160 &
 ```
 
-### Обновление фронтенда
+**2. Просмотр логов (если сайт не открывается):**
+```bash
+pm2 logs wicar-frontend
+```
+
+**3. Проверка порта:**
+```bash
+netstat -tulpn | grep 3160
+```
+
+---
+
+### ☁️ Способ 2: Git (Только если есть интернет)
+> [!WARNING]
+> Этот метод сейчас НЕ РАБОТАЕТ из-за ограничений сети на сервере.
 
 ```bash
 cd /home/node_mmi/www/wicar/front
@@ -178,7 +201,7 @@ server {
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
 
-    client_max_body_size 10M;
+    client_max_body_size 100M;
 
     # Фронтенд (Node.js на порту 3160)
     location / {

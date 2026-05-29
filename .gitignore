@@ -44,3 +44,7 @@ IMPLEMENTATION_PLAN.md
 # Scripts
 backend/scripts/
 node_modules
+
+# Deploy artifacts
+wicar-front-updated.zip
+deploy_wheels/
