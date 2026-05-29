@@ -251,18 +251,17 @@ export default function Home() {
                     <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.info2')}
                   </a>
                 )}
-                {conferenceFiles['collection']?.file_url && (
-                  <a
-                    href={conferenceFiles['collection'].file_url}
-                    download={conferenceFiles['collection'].file_name || "proceedings.pdf"}
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "sm" }),
-                      "border-conference-blue text-conference-blue-foreground dark:border-conference-accent dark:text-conference-accent hover:bg-conference-blue hover:text-conference-blue-foreground dark:hover:bg-conference-accent px-3 sm:px-5 h-8 sm:h-10 rounded-none text-[8px] sm:text-[9px] uppercase tracking-widest font-bold transition-all"
-                    )}
-                  >
-                    <FileText className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.collection_btn')}
-                  </a>
-                )}
+                {/* Сборник: прямая ссылка на загруженный PDF (приоритет — файл из админки) */}
+                <a
+                  href={conferenceFiles['collection']?.file_url || '/files/CONF_WICAR17.05.2026.pdf'}
+                  download={conferenceFiles['collection']?.file_name || 'CONF_WICAR_2026.pdf'}
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "border-conference-blue text-conference-blue-foreground dark:border-conference-accent dark:text-conference-accent hover:bg-conference-blue hover:text-conference-blue-foreground dark:hover:bg-conference-accent px-3 sm:px-5 h-8 sm:h-10 rounded-none text-[8px] sm:text-[9px] uppercase tracking-widest font-bold transition-all"
+                  )}
+                >
+                  <FileText className="mr-1 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('hero.download.collection_btn')}
+                </a>
               </div>
             </div>
           </motion.div>
