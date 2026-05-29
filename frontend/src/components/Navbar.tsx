@@ -49,7 +49,7 @@ export default function Navbar() {
         <div className="flex justify-between h-14 sm:h-16 items-center">
           <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2 sm:gap-3 group cursor-pointer">
             <div className="p-0 transition-colors">
-              <img src="/img/logo_org/logo.jpg" alt="Logo" className="h-8 w-8 sm:h-10 sm:w-10 object-contain rounded-full" />
+              <img src="/img/logo_new.png" alt="Logo" className="h-8 w-8 sm:h-10 sm:w-10 object-contain rounded-full" />
             </div>
             <span className="font-serif text-lg sm:text-2xl font-semibold tracking-tight text-conference-blue-foreground">WICAR 2026</span>
           </Link>

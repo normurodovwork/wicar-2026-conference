@@ -138,13 +138,19 @@ export default function Home() {
       {/* Hero Section */}
       <section ref={heroRef} className="relative h-screen flex items-center justify-center pt-14 sm:pt-16 overflow-hidden text-center bg-background">
         <motion.div style={{ y: backgroundY }} className="absolute inset-0 z-0">
-          <img 
-            src="https://images.wallpapersden.com/image/download/serene-desert-4k-dunes-beach-landscape_bmdqaG2UmZqaraWkpJRobWllrWdqaWg.jpg" 
-            alt="Water background" 
-            className="w-full h-full object-cover opacity-70 dark:opacity-50 scale-110"
-            referrerPolicy="no-referrer"
+          {/* Баннер по теме: светлый — в светлой, тёмный — в тёмной */}
+          <img
+            src="/img/Light_bg_banner.png"
+            alt="WICAR 2026 banner"
+            className="w-full h-full object-cover scale-110 block dark:hidden"
           />
-          <div className="absolute inset-0 bg-white/60 dark:bg-background/70" />
+          <img
+            src="/img/Dark_bg_banner.png"
+            alt="WICAR 2026 banner"
+            className="w-full h-full object-cover scale-110 hidden dark:block"
+          />
+          {/* Лёгкое покрытие для читаемости текста */}
+          <div className="absolute inset-0 bg-white/30 dark:bg-background/40" />
         </motion.div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-30">
@@ -307,7 +313,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center gap-12 max-w-4xl mx-auto">
             <div className="w-64 h-64 shrink-0 rounded-full border-4 border-conference-blue/10 p-4 bg-white flex items-center justify-center overflow-hidden">
               <img
-                src="/img/logo_org/logo.jpg"
+                src="/img/logo_new.png"
                 alt="Organizer Logo"
                 className="w-full h-full object-contain"
               />
@@ -660,7 +666,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-2 space-y-6">
               <div className="flex items-center gap-3">
-                <img src="/img/logo_org/logo.jpg" alt="Logo" className="h-8 w-8 object-contain rounded-full" />
+                <img src="/img/logo_new.png" alt="Logo" className="h-8 w-8 object-contain rounded-full" />
                 <span className="font-serif text-2xl font-semibold text-conference-blue-foreground">WICAR 2026</span>
               </div>
               <p className="text-conference-blue-foreground text-sm max-w-sm font-light leading-relaxed">
